@@ -14,15 +14,19 @@ const createPointTemplate = (point) =>{
 
   const offersTemplate = () => {
     if (!checkedOffers.length) {
-      return `<li class="event__offer">
-    <span class="event__offer-title">No additional offers</span>
-    </li>`;
+      return (
+        `<li class="event__offer">
+          <span class="event__offer-title">No additional offers</span>
+        </li>
+      `);
     } else {
-      const template = checkedOffers.map((offer) => `<li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
-    </li>`).join('');
+      const template = checkedOffers.map((offer) =>
+        `<li class="event__offer">
+          <span class="event__offer-title">${offer.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </li>
+    `).join('');
       return template;
     }
   };
@@ -31,7 +35,8 @@ const createPointTemplate = (point) =>{
   const parceDateStart = dayjs(dateFrom);
   const parceDateEnd = dayjs(dateTo);
 
-  return `<li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime="${dateFrom}">${parceDateStart.format(DATE_FORMAT_DATE)}</time>
         <div class="event__type">
@@ -56,7 +61,8 @@ const createPointTemplate = (point) =>{
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>`;
+    </li>
+    `);
 };
 
 export default class PointView {
