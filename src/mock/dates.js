@@ -1,6 +1,21 @@
 import dayjs from 'dayjs';
 import { getRandomInteger } from './util';
-import { TimeRanges } from '../const';
+
+
+const TimeRanges = {
+  DAYS: {
+    MIN: 1,
+    MAX: 3
+  },
+  HOURS: {
+    MIN: 1,
+    MAX: 23
+  },
+  MINUTES: {
+    MIN: 1,
+    MAX: 59
+  }
+};
 
 const getRandomDate = () =>
   dayjs().add(getRandomInteger(TimeRanges.DAYS.MIN, TimeRanges.DAYS.MAX), 'day')

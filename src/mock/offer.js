@@ -1,6 +1,11 @@
 import { getRandomArrayElement, getRandomInteger } from './util.js';
 
-import { OFFERS_TITLES, MIN_OFFER_PRICE, MAX_OFFER_PRICE, MIN_OFFERS, MAX_OFFERS, POINTS_TYPES } from '../const.js';
+import { OFFERS_TITLES, POINTS_TYPES } from '../const.js';
+
+const MIN_OFFER_PRICE = 20;
+const MAX_OFFER_PRICE = 250;
+const MIN_OFFERS = 3;
+const MAX_OFFERS = 8;
 
 const getOffer = (index) => ({
   id: ++index,
