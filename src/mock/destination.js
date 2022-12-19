@@ -1,15 +1,19 @@
 import { getRandomInteger, getRandomArrayElement } from './util.js';
-import { DESCRIPTIONS, CITIES_NAMES } from '../const.js';
+import { DESCRIPTIONS, CITIES_NAMES} from './const.js';
 
-const MIN_COUNT_DESCRIPTIONS = 1;
-const MAX_COUNT_DESCRIPTIONS = 5;
-const MIN_RANDOM_PIC = 1;
-const MAX_RANDOM_PIC = 50;
-const MIN_PICTURES_COUNT = 2;
-const MAX_PICTURES_COUNT = 6;
+const DescriptionsCount = {
+  MIN: 1,
+  MAX: 5
+};
+const Pictures = {
+  MIN_RANDOM: 1,
+  MAX_RANDOM: 50,
+  MIN_COUNT: 2,
+  MAX_COUNT: 6
+};
 
 const getRandomDestinationDescription = () => {
-  const count = getRandomInteger(MIN_COUNT_DESCRIPTIONS, MAX_COUNT_DESCRIPTIONS, );
+  const count = getRandomInteger(DescriptionsCount.MIN, DescriptionsCount.MAX);
   const descriptionsArr = [];
   for (let i = 0; i <= count; i++) {
     descriptionsArr.push(
@@ -19,7 +23,7 @@ const getRandomDestinationDescription = () => {
 };
 
 const getPicture = () => ({
-  src: `https://loremflickr.com/248/152?random=${getRandomInteger(MIN_RANDOM_PIC, MAX_RANDOM_PIC)}`,
+  src: `https://loremflickr.com/248/152?random=${getRandomInteger(Pictures.MIN_RANDOM, Pictures.MAX_RANDOM)}`,
   description: getRandomArrayElement(DESCRIPTIONS)
 });
 
@@ -27,7 +31,7 @@ const getDestination = (index) =>({
   id: ++index,
   description: getRandomDestinationDescription(),
   name: getRandomArrayElement(CITIES_NAMES),
-  pictures: Array.from({ length: getRandomInteger(MIN_PICTURES_COUNT, MAX_PICTURES_COUNT) }, getPicture)
+  pictures: Array.from({ length: getRandomInteger(Pictures.MIN_COUNT, Pictures.MAX_COUNT) }, getPicture)
 });
 
 export {getRandomDestinationDescription, getDestination};

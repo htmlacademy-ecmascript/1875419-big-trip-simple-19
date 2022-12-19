@@ -11,12 +11,12 @@ import { isEscapeKey } from '../util.js';
 export default class TripPresenter {
   #pointListComponent = new PointListView();
 
-  #pointContainer = null;
+  #pointsContainer = null;
   #pointsModel = null;
   #listPoints = [];
 
-  constructor({pointContainer, pointsModel}) {
-    this.#pointContainer = pointContainer;
+  constructor({pointsContainer, pointsModel}) {
+    this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
   }
 
@@ -28,13 +28,13 @@ export default class TripPresenter {
 
   #renderPointsList() {
     if (!this.#listPoints.length) {
-      render(new ListEmptyView(), this.#pointContainer);
+      render(new ListEmptyView(), this.#pointsContainer);
       return;
     }
 
 
-    render(new ListSortView(), this.#pointContainer);
-    render(this.#pointListComponent, this.#pointContainer);
+    render(new ListSortView(), this.#pointsContainer);
+    render(this.#pointListComponent, this.#pointsContainer);
     render(new NewPointView(), this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
 
     this.#listPoints.forEach((point) => this.#renderPoint(point));
