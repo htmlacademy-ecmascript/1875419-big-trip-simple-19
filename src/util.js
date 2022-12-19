@@ -1,5 +1,3 @@
-const getRandomArrayElement = (items) => (
-  items[Math.floor(Math.random() * items.length)]
-);
+const isEscapeKey = (evt) => (evt.key === 'Escape' || evt.key === 'Esc');
 
-export {getRandomArrayElement};
+export {isEscapeKey};

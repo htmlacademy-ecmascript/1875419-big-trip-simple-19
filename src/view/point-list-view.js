@@ -1,14 +1,13 @@
 import {createElement} from '../render.js';
 
-const createLoadingTemplate = () =>
-  ('<p class="trip-events__msg">Loading...</p>');
+const createPointListTemplate = () =>('<ul class="trip-events__list"></ul>');
 
 
-export default class LoadingView {
+export default class PointListView {
   #element = null;
 
   get template() {
-    return createLoadingTemplate();
+    return createPointListTemplate();
   }
 
   get element() {
