@@ -53,7 +53,7 @@ export default class TripPresenter {
 
     const pointComponent = new PointView({
       point,
-      onRollupButtonClick: () => {
+      onRollupBtnClick: () => {
         replacePointToEditForm.call(this);
         document.addEventListener('keydown', onEscKeyDown);
       }
@@ -65,7 +65,7 @@ export default class TripPresenter {
         replaceEditFormToPoint.call(this);
         document.removeEventListener('keydown', onEscKeyDown);
       },
-      onRollupButtonClick: () => {
+      onRollupBtnClick: () => {
         replaceEditFormToPoint.call(this);
         document.removeEventListener('keydown', onEscKeyDown);
       }
