@@ -9,7 +9,7 @@ import { getRandomPoint } from './mock/point.js';
 
 const POINTS_COUNT = 5;
 
-const mockPoints = Array.from({length: POINTS_COUNT}, getRandomPoint);
+const mockPoints = Array.from({length: POINTS_COUNT}, (value, index) => getRandomPoint(index));
 
 const headerFiltersElement = document.querySelector('.trip-controls__filters');
 const mainEventsElement = document.querySelector('.trip-events');
@@ -19,7 +19,7 @@ const tripPresenter = new TripPresenter({
   pointsContainer: mainEventsElement,
   pointsModel
 });
-
+console.log(tripPresenter);
 const points = pointsModel.points;
 
 const filters = generateFilter(points);
