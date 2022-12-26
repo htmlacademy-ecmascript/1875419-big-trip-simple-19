@@ -5,17 +5,23 @@ import { render } from './framework/render.js';
 import { generateFilter } from './mock/filter.js';
 import { generateSort } from './mock/sort.js';
 import ListSortView from './view/list-sort-view.js';
+import { getRandomPoint } from './mock/point.js';
+
+const POINTS_COUNT = 5;
+
+const mockPoints = Array.from({length: POINTS_COUNT}, getRandomPoint);
 
 const headerFiltersElement = document.querySelector('.trip-controls__filters');
 const mainEventsElement = document.querySelector('.trip-events');
-const pointsModel = new PointsModel();
 
+const pointsModel = new PointsModel(mockPoints);
 const tripPresenter = new TripPresenter({
   pointsContainer: mainEventsElement,
   pointsModel
 });
 
 const points = pointsModel.points;
+
 const filters = generateFilter(points);
 render(new ListFilterView({filters}), headerFiltersElement);
 
