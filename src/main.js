@@ -1,8 +1,10 @@
 import ListFilterView from './view/list-filter-view.js';
 import TripPresenter from './presenter/trips-presenter.js';
-//import {render} from './render.js';
 import PointsModel from './model/points-model.js';
-import {render} from './framework/render.js';
+import { render } from './framework/render.js';
+import { generateFilter } from './mock/filter.js';
+import { generateSort } from './mock/sort.js';
+import ListSortView from './view/list-sort-view.js';
 
 const headerFiltersElement = document.querySelector('.trip-controls__filters');
 const mainEventsElement = document.querySelector('.trip-events');
@@ -13,7 +15,12 @@ const tripPresenter = new TripPresenter({
   pointsModel
 });
 
-render(new ListFilterView, headerFiltersElement);
+const points = pointsModel.points;
+const filters = generateFilter(points);
+render(new ListFilterView({filters}), headerFiltersElement);
+
+const sortedPoints = generateSort(points);
+render(new ListSortView(sortedPoints), mainEventsElement);
 
 tripPresenter.init();
 

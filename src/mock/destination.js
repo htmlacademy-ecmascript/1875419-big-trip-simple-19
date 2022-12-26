@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomArrayElement } from './util.js';
+import { getRandomInteger, getRandomArrayElement } from '../utils.js/common.js';
 import { DESCRIPTIONS, CITIES_NAMES} from './const.js';
 
 const DescriptionsCount = {

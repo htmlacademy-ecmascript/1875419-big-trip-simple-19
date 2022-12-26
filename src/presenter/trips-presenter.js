@@ -1,11 +1,10 @@
-import ListSortView from '../view/list-sort-view.js';
 import EditPointView from '../view/edit-point-view.js';
-import NewPointView from '../view/add-new-point-view.js';
+//import NewPointView from '../view/add-new-point-view.js';
 import PointView from '../view/point-view.js';
 import PointListView from '../view/point-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import { isEscapeKey } from '../util.js';
-import { render, RenderPosition } from '../framework/render.js';
+import { render, replace} from '../framework/render.js';
 
 
 export default class TripPresenter {
@@ -33,9 +32,8 @@ export default class TripPresenter {
     }
 
 
-    render(new ListSortView(), this.#pointsContainer);
     render(this.#pointListComponent, this.#pointsContainer);
-    render(new NewPointView(), this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
+    //render(new NewPointView(), this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
 
     this.#listPoints.forEach((point) => this.#renderPoint(point));
   }
@@ -72,11 +70,11 @@ export default class TripPresenter {
     });
 
     function replacePointToEditForm () {
-      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent);
     }
 
     function replaceEditFormToPoint () {
-      this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent);
     }
 
     render(pointComponent, this.#pointListComponent.element);
