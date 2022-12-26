@@ -19,7 +19,7 @@ const tripPresenter = new TripPresenter({
   pointsContainer: mainEventsElement,
   pointsModel
 });
-
+console.log(tripPresenter);
 const points = pointsModel.points;
 
 const filters = generateFilter(points);
