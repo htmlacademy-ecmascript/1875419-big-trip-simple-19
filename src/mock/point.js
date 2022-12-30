@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomArrayElement } from './util.js';
+import { getRandomInteger, getRandomArrayElement } from '../utils.js/common.js';
 import { POINTS_TYPES } from './const.js';
 import { getRandomDates } from './dates.js';
 import { getDestination } from './destination.js';
@@ -40,7 +40,6 @@ const getRandomPoint = (count) => {
     dateTo: randomDates.dateTo,
     destination: getRandomArrayElement(destinations).id,
     id: count,
-    isFavorite: false,
     offers: getRandomOffersIds(),
     type: getRandomArrayElement(POINTS_TYPES)
   };

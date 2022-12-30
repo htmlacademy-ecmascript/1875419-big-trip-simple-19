@@ -1,11 +1,10 @@
-import ListSortView from '../view/list-sort-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import NewPointView from '../view/add-new-point-view.js';
 import PointView from '../view/point-view.js';
 import PointListView from '../view/point-list-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
-import {render, RenderPosition} from '../render.js';
 import { isEscapeKey } from '../util.js';
+import { render, replace, RenderPosition} from '../framework/render.js';
 
 
 export default class TripPresenter {
@@ -33,7 +32,6 @@ export default class TripPresenter {
     }
 
 
-    render(new ListSortView(), this.#pointsContainer);
     render(this.#pointListComponent, this.#pointsContainer);
     render(new NewPointView(), this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
 
@@ -42,41 +40,42 @@ export default class TripPresenter {
 
 
   #renderPoint(point) {
-    const pointComponent = new PointView({point});
-    const pointEditComponent = new EditPointView({point});
-
-    const pointRollupBtn = pointComponent.element.querySelector('.event__rollup-btn');
-    const editPointForm = pointEditComponent.element.querySelector('form');
-    const editRollupBtn = editPointForm.querySelector('.event__rollup-btn');
-
-    const replacePointToEditForm = () => {
-      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
-      editRollupBtn.addEventListener('click', onCloseEditPointForm);
-      editPointForm.addEventListener('submit', onCloseEditPointForm);
-      document.addEventListener('keydown', onEscKeyDown);
-    };
-
-    const replaceEditFormToPoint = () => {
-      this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
-      editRollupBtn.removeEventListener('click', onCloseEditPointForm);
-      editPointForm.removeEventListener('submit', onCloseEditPointForm);
-      document.removeEventListener('keydown', onEscKeyDown);
-    };
 
     function onEscKeyDown(evt) {
       if (isEscapeKey) {
-        onCloseEditPointForm(evt);
+        evt.preventDefault();
+        replaceEditFormToPoint();
+        document.removeEventListener('keydown', onEscKeyDown);
       }
     }
 
-    function onCloseEditPointForm (evt) {
-      evt.preventDefault();
-      replaceEditFormToPoint();
+    const pointComponent = new PointView({
+      point,
+      onRollupBtnClick: () => {
+        replacePointToEditForm.call(this);
+        document.addEventListener('keydown', onEscKeyDown);
+      }
+    });
+
+    const pointEditComponent = new EditPointView({
+      point,
+      onFormSubmit: () => {
+        replaceEditFormToPoint.call(this);
+        document.removeEventListener('keydown', onEscKeyDown);
+      },
+      onRollupBtnClick: () => {
+        replaceEditFormToPoint.call(this);
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    });
+
+    function replacePointToEditForm () {
+      replace(pointEditComponent, pointComponent);
     }
 
-    pointRollupBtn.addEventListener('click', () => {
-      replacePointToEditForm();
-    });
+    function replaceEditFormToPoint () {
+      replace(pointComponent, pointEditComponent);
+    }
 
     render(pointComponent, this.#pointListComponent.element);
   }

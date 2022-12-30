@@ -1,7 +1,7 @@
-import {createElement} from '../render.js';
 import { destinations, offersByType } from '../mock/point.js';
 import dayjs from 'dayjs';
 import { DATE_FORMAT } from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 
 const createEditPointTemplate = (point) => {
@@ -9,8 +9,8 @@ const createEditPointTemplate = (point) => {
   const pointTypeOffer = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
 
-  const parceDateStart = dayjs(dateFrom);
-  const parceDateEnd = dayjs(dateTo);
+  const parseDateStart = dayjs(dateFrom);
+  const parseDateEnd = dayjs(dateTo);
 
   const tripOptionsList = offersByType.map((element) =>
     `<div class="event__type-item">
@@ -85,10 +85,10 @@ const createEditPointTemplate = (point) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${parceDateStart.format(DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${parseDateStart.format(DATE_FORMAT)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${parceDateEnd.format(DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${parseDateEnd.format(DATE_FORMAT)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -119,27 +119,34 @@ const createEditPointTemplate = (point) => {
   );
 };
 
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
   #point = null;
+  #handleFormSubmit = null;
+  #handleRollupBtnClick = null;
 
-  constructor({point}) {
+  constructor({point, onFormSubmit, onRollupBtnClick}) {
+    super();
     this.#point = point;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleRollupBtnClick = onRollupBtnClick;
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#rollupButtonClickHandler);
   }
 
   get template() {
     return createEditPointTemplate(this.#point);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #rollupButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupBtnClick();
+  };
 }
