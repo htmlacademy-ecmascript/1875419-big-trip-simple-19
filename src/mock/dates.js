@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { getRandomInteger } from '../utils.js/common.js';
+import { getRandomInteger } from './utils.js';
 
 const TimeDuration = {
   DAY: 'day',

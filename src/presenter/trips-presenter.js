@@ -1,8 +1,8 @@
 import EditPointView from '../view/edit-point-view.js';
 import NewPointView from '../view/add-new-point-view.js';
 import PointView from '../view/point-view.js';
-import PointListView from '../view/point-list-view.js';
-import ListEmptyView from '../view/list-empty-view.js';
+import PointListView from '../view/points-view.js';
+import ListEmptyView from '../view/empty-view.js';
 import { isEscapeKey } from '../util.js';
 import { render, replace, RenderPosition} from '../framework/render.js';
 

@@ -1,7 +1,6 @@
 import { destinations, offersByType } from '../mock/point.js';
-import dayjs from 'dayjs';
-import { DATE_FORMAT } from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import { getDate } from '../utils/dates.js';
 
 
 const createEditPointTemplate = (point) => {
@@ -9,8 +8,6 @@ const createEditPointTemplate = (point) => {
   const pointTypeOffer = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
 
-  const parseDateStart = dayjs(dateFrom);
-  const parseDateEnd = dayjs(dateTo);
 
   const tripOptionsList = offersByType.map((element) =>
     `<div class="event__type-item">
@@ -85,10 +82,10 @@ const createEditPointTemplate = (point) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${parseDateStart.format(DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${getDate(dateFrom)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${parseDateEnd.format(DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${getDate(dateTo)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
