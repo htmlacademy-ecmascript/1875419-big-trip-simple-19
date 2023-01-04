@@ -1,4 +1,4 @@
-import { generateSortOptions } from '../utils.js/sort.js';
+import { generateSortOptions } from '../utils/sort.js';
 
 const generateSort = (points) =>
   Object.entries(generateSortOptions).map(([optionName, filterPoints]) => ({

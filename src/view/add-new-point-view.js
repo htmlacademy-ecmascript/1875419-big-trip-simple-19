@@ -1,17 +1,26 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { destinations, offersByType } from '../mock/point.js';
 import dayjs from 'dayjs';
-import { DATE_FORMAT } from '../const.js';
-import { DefaultNewPoint } from '../mock/const.js';
+import { getDate } from '../utils/dates.js';
 
+const DEFAULT_START_DATE = dayjs().toISOString();
+const DEFAULT_END_DATE = dayjs().add((1),'day').toISOString();
+
+const defaultNewPoint = {
+  basePrice: 0,
+  dateFrom: DEFAULT_START_DATE,
+  dateTo: DEFAULT_END_DATE,
+  destination: 1,
+  id: 0,
+  offers: [],
+  type: 'taxi'
+};
 
 const createNewPointTemplate = (point) => {
   const {basePrice, dateFrom, dateTo, destination, id, offers, type} = point;
   const pointTypeOffer = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
 
-  const parseDateStart = dayjs(dateFrom);
-  const parseDateEnd = dayjs(dateTo);
 
   const tripOptionsList = offersByType.map((element) =>
     `<div class="event__type-item">
@@ -97,10 +106,10 @@ const createNewPointTemplate = (point) => {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${parseDateStart.format(DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${getDate(dateFrom)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${parseDateEnd.format(DATE_FORMAT)}">
+            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${getDate(dateTo)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -136,7 +145,7 @@ const createNewPointTemplate = (point) => {
 export default class NewPointView extends AbstractView {
   #point = null;
 
-  constructor(point = DefaultNewPoint) {
+  constructor(point = defaultNewPoint) {
     super();
     this.#point = point;
   }

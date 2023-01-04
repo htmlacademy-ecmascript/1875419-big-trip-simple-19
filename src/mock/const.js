@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 const DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -18,21 +17,8 @@ const OFFERS_TITLES = ['Upgrade to a business class', 'Order Uber', 'Add luggage
 const POINTS_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 
-const START_DATE = dayjs().toISOString();
-const END_DATE = dayjs().add((1),'day').toISOString();
-
-const DefaultNewPoint = {
-  basePrice: 0,
-  dateFrom: START_DATE,
-  dateTo: END_DATE,
-  destination: 1,
-  id: 0,
-  offers: [],
-  type: 'taxi'
-};
 export { DESCRIPTIONS,
   CITIES_NAMES,
   OFFERS_TITLES,
-  POINTS_TYPES,
-  DefaultNewPoint
+  POINTS_TYPES
 };
