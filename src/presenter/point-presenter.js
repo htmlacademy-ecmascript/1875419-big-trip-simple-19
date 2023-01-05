@@ -71,15 +71,15 @@ export default class PointPresenter {
     }
   };
 
-  #handleEditClick() {
+  #handleEditClick = () => {
     this.#replacePointToEditForm();
-  }
+  };
 
-  #handleFormSubmit() {
+  #handleFormSubmit = () => {
     this.#replaceEditFormToPoint();
-  }
+  };
 
-  #handleRollupBtnClick() {
+  #handleRollupBtnClick = () => {
     this.#replaceEditFormToPoint();
-  }
+  };
 }
