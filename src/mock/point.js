@@ -3,6 +3,7 @@ import { POINTS_TYPES } from './const.js';
 import { getRandomDates } from './dates.js';
 import { getDestination } from './destination.js';
 import { getOfferByType } from './offer.js';
+import { nanoid } from 'nanoid';
 
 const MIN_ARRAY_LENGTH = 0;
 const DESTINATIONS_COUNT = 6;
@@ -33,7 +34,7 @@ const getRandomOffersIds = () => {
   return ids;
 };
 
-const getRandomPoint = (count) => {
+const getRandomPoint = () => {
   const randomDates = getRandomDates();
 
   return {
@@ -41,7 +42,7 @@ const getRandomPoint = (count) => {
     dateFrom: randomDates.dateFrom,
     dateTo: randomDates.dateTo,
     destination: getRandomArrayElement(destinations).id,
-    id: count,
+    id: nanoid(),
     offers: getRandomOffersIds(),
     type: getRandomArrayElement(POINTS_TYPES)
   };
