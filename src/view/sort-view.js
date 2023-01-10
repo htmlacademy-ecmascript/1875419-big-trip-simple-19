@@ -1,45 +1,53 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createSortItemTemplate = (option, isChecked) => {
-  const {name, count} = option;
-
-  return (
-    `<div class="trip-sort__item  trip-sort__item--${name}">
+const renderSortOptionsTemplate = (options, currentSortType) =>
+  options
+    .map(
+      (option) =>
+        `<div class="trip-sort__item  trip-sort__item--${option.name}">
           <input 
-          id="sort-${name}" 
+          id="sort-${option.name}" 
           class="trip-sort__input  
-          visually-hidden" 
-          type="radio" 
+          visually-hidden" type="radio" 
           name="trip-sort" 
-          value="sort-${name}" 
-          ${isChecked ? 'checked' : ''}
-          ${count === 0 ? 'checked' : ''}>
-          <label class="trip-sort__btn" for="sort-${name}">${name}</label>
-    </div>`
-  );
-};
-const createListSortTemplate = (sortOptions) => {
-  const sortOptionsTemplate = sortOptions
-    .map((option, index) => createSortItemTemplate(option, index === 0))
+          value="${option.name}" 
+          ${option.name === currentSortType ? 'checked' : ''} 
+          ${option.disabled ? 'disabled' : ''}>
+          <label class="trip-sort__btn" data-sort-type=${option.name} for="sort-${option.name}">${option.name}</label>
+        </div>`
+    )
     .join('');
 
-  return (
-    `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-    ${sortOptionsTemplate}
-  </form>`
-  );
-};
+const createListSortTemplate = (options, currentSortType) =>
+  `<form class="trip-events__trip-sort trip-sort" action="#" method="get">
+    ${renderSortOptionsTemplate(options, currentSortType)}
+  </form>`;
 
 export default class ListSortView extends AbstractView {
   #options = null;
+  #handleSortTypeChange = null;
+  #currentSortType = null;
 
-  constructor(options) {
+  constructor({sortOption, currentSortType, onSortTypeChange}) {
     super();
-    this.#options = options;
+    this.#options = sortOption;
+    this.#handleSortTypeChange = onSortTypeChange;
+    this.#currentSortType = currentSortType;
+
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
 
   get template() {
-    return createListSortTemplate(this.#options);
+    return createListSortTemplate(this.#options, this.#currentSortType);
   }
+
+  #sortTypeChangeHandler = (evt) => {
+
+    if (evt.target.tagName !== 'LABEL') {
+      return;
+    }
+    evt.preventDefault();
+    this.#handleSortTypeChange(evt.target.dataset.sortType);
+  };
 
 }

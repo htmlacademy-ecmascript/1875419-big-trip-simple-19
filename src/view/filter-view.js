@@ -1,47 +1,55 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilterItemTemplate = (filter, isChecked) => {
-  const {name, count} = filter;
-
-  return (
-    `<div class="trip-filters__filter">
-      <input 
-      id="filter-${name}" 
-      class="trip-filters__filter-input  
-      visually-hidden" 
-      type="radio" 
-      name="trip-filter" 
-      value="${name}"
-      ${isChecked ? 'checked' : ''}
-      ${count === 0 ? 'disabled' : ''}
-      >
-      <label class="trip-filters__filter-label" for="filter-${name}">${name}</label>
-    </div>`
-  );
-};
-
-const createListFilterTemplate = (filterItems) => {
-  const filterItemsTemplate = filterItems
-    .map((filter, index) => createFilterItemTemplate(filter, index === 0))
+const renderFilterOptionsTemplate = (filters, currentFilterType) =>
+  filters
+    .map(
+      (filter) =>
+        `<div class="trip-filters__filter">
+          <input 
+          id="filter-${filter.name}" 
+          class="trip-filters__filter-input  
+          visually-hidden" type="radio" 
+          name="trip-filter" 
+          value="${filter.type}" 
+          ${filter.count === 0 ? 'disabled' : ''} 
+          ${filter.type === currentFilterType ? 'checked' : ''} 
+          data-sort-type="${filter.type}">
+          <label class="trip-filters__filter-label" data-filter-type=${filter.name} for="filter-${filter.name}">${filter.name} ${filter.count}</label>
+        </div>`
+    )
     .join('');
 
-  return (
-    `<form class="trip-filters" action="#" method="get">
-      ${filterItemsTemplate}
+const createListFilterTemplate = (filters, currentFilterType) =>
+  `<form class="trip-filters" action="#" method="get">
+    ${renderFilterOptionsTemplate(filters, currentFilterType)}
     <button class="visually-hidden" type="submit">Accept filter</button>
-  </form>`
-  );
-};
+  </form>`;
+
 export default class ListFilterView extends AbstractView {
   #filters = null;
+  #currentFilter = null;
+  #handleFilterClick = null;
 
-  constructor({filters}) {
+  constructor({filters, currentFilterType, onFilterChange}) {
     super();
     this.#filters = filters;
+    this.#currentFilter = currentFilterType;
+    this.#handleFilterClick = onFilterChange;
+
+    this.element.addEventListener('click', this.#filterClickHandler);
   }
 
   get template() {
-    return createListFilterTemplate(this.#filters);
+    return createListFilterTemplate(this.#filters, this.#currentFilter);
   }
+
+  #filterClickHandler = (evt) => {
+
+    if (evt.target.tagName !== 'LABEL') {
+      return;
+    }
+    evt.preventDefault();
+    this.#handleFilterClick(evt.target.dataset.filterType);
+  };
 
 }
