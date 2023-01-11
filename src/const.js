@@ -11,8 +11,14 @@ const SortType = {
   OFFERS: 'offers',
 };
 
+const PointState = {
+  EDIT: 'edit',
+  ADD: 'add',
+};
+
 export {
   FilterType,
-  SortType
+  SortType,
+  PointState
 };
 
