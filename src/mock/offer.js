@@ -4,8 +4,9 @@ import { OFFERS_TITLES, POINTS_TYPES } from './const.js';
 
 const MIN_OFFER_PRICE = 20;
 const MAX_OFFER_PRICE = 250;
-const MIN_OFFERS = 3;
-const MAX_OFFERS = 8;
+// const MIN_OFFERS = 3;
+// const MAX_OFFERS = 8;
+const OFFERS_BY_TYPE_COUNT = 8;
 
 const getOffer = (index) => ({
   id: ++index,
@@ -13,9 +14,26 @@ const getOffer = (index) => ({
   price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE)
 });
 
-const getOfferByType = () => ({
-  type: getRandomArrayElement(POINTS_TYPES),
-  offers: Array.from({ length: getRandomInteger(MIN_OFFERS, MAX_OFFERS) }, (value, index) => getOffer(index))
-});
 
-export {getOfferByType};
+const getOffers = () => {
+  const offersSet = new Set();
+  for (let i = 0; i < OFFERS_BY_TYPE_COUNT; i++) {
+    offersSet.add(getOffer(i));
+  }
+  return Array.from(offersSet);
+};
+
+const getOffersByTypes = () => {
+
+  const offers = [];
+
+  for (const type of POINTS_TYPES) {
+    offers.push({
+      type,
+      offers: getRandomInteger(0, 4) ? getOffers() : [],
+    });
+  }
+  return offers;
+};
+
+export {getOffersByTypes};

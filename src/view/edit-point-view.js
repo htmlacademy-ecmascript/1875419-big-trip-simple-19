@@ -46,7 +46,7 @@ const createEditPointTemplate = (point) => {
       </div>
     </section>`;
 
-    if (!pointTypeOffer) {
+    if (pointTypeOffer.offers.length === 0) {
       template = '';
     }
     return template;

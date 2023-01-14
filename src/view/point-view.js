@@ -12,7 +12,7 @@ const createPointTemplate = (point) =>{
   `<li class="event__offer">
     <span class="event__offer-title">No additional offers</span>
   </li>`;
-  if (pointTypeOffer) {
+  if (pointTypeOffer.offers.length !== 0) {
     offersTemplate = pointTypeOffer.offers
       .filter((offer) => offers.includes(offer.id))
       .map((offer) =>
