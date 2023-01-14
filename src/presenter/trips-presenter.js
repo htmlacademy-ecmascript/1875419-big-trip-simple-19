@@ -29,7 +29,6 @@ export default class TripPresenter {
   #filterComponent = null;
   #sourcedBoardPoints = [];
   #headerContainer = null;
-  #defaultSorteddPoints = [];
 
 
   constructor({pointsContainer, pointsModel, filteredPoints, headerFiltersElement}) {
@@ -41,7 +40,7 @@ export default class TripPresenter {
 
   init() {
     this.#listPoints = [...this.#pointsModel.points];
-    this.#sourcedBoardPoints = [...this.#pointsModel.points];
+    this.#sourcedBoardPoints = [...this.#pointsModel.sortedPointsByDay];
 
     this.#renderPointsList();
     this.#renderSort();
@@ -63,10 +62,8 @@ export default class TripPresenter {
     //render(new NewPointView(), this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
 
     //это я таким способом только смогла придумать, как изначально отсортировать точки модели и отрисовать их в нужном порядке
-    this.#defaultSorteddPoints = [...this.#sourcedBoardPoints];
-    this.#defaultSorteddPoints = getSortedPoints(this.#defaultSorteddPoints, SortType.DAY);
 
-    this.#defaultSorteddPoints.forEach((point) => this.#renderPoint(point));
+    this.#sourcedBoardPoints.forEach((point) => this.#renderPoint(point));
   }
 
   #renderEmptyList() {
