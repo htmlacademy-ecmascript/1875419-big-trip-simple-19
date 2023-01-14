@@ -46,7 +46,6 @@ export default class ListSortView extends AbstractView {
     if (evt.target.tagName !== 'LABEL') {
       return;
     }
-    evt.preventDefault();
     this.#handleSortTypeChange(evt.target.dataset.sortType);
   };
 

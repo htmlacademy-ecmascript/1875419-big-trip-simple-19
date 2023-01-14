@@ -10,10 +10,10 @@ const renderFilterOptionsTemplate = (filters, currentFilterType) =>
           class="trip-filters__filter-input  
           visually-hidden" type="radio" 
           name="trip-filter" 
-          value="${filter.type}" 
+          value="${filter.name}" 
           ${filter.count === 0 ? 'disabled' : ''} 
-          ${filter.type === currentFilterType ? 'checked' : ''} 
-          data-sort-type="${filter.type}">
+          ${filter.name === currentFilterType ? 'checked' : ''} 
+          data-sort-type="${filter.name}">
           <label class="trip-filters__filter-label" data-filter-type=${filter.name} for="filter-${filter.name}">${filter.name} ${filter.count}</label>
         </div>`
     )
@@ -48,7 +48,6 @@ export default class ListFilterView extends AbstractView {
     if (evt.target.tagName !== 'LABEL') {
       return;
     }
-    evt.preventDefault();
     this.#handleFilterClick(evt.target.dataset.filterType);
   };
 
