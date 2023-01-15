@@ -65,6 +65,17 @@ const createEditPointTemplate = (point) => {
     }
     return template;
   };
+
+  const picturesTemplate = () => {
+    let template = '';
+    if (pointDestination) {
+      template = pointDestination.pictures
+        .map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)
+        .join('');
+    }
+    return template;
+  };
+
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -123,6 +134,12 @@ const createEditPointTemplate = (point) => {
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${pointDestination.description}</p>
+
+            <div class="event__photos-container">
+              <div class="event__photos-tape">
+                ${picturesTemplate()}
+              </div>
+            </div>
           </section>
         </section>
       </form>
