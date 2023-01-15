@@ -1,7 +1,21 @@
 import { destinations, offersByType } from '../mock/point.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getDate } from '../utils/dates.js';
+import dayjs from 'dayjs';
 
+
+const DEFAULT_START_DATE = dayjs().toISOString();
+const DEFAULT_END_DATE = dayjs().add((1),'day').toISOString();
+
+const defaultNewPoint = {
+  basePrice: 0,
+  dateFrom: DEFAULT_START_DATE,
+  dateTo: DEFAULT_END_DATE,
+  destination: 1,
+  id: 0,
+  offers: [],
+  type: 'taxi'
+};
 
 const createEditPointTemplate = (point) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
@@ -116,14 +130,13 @@ const createEditPointTemplate = (point) => {
   );
 };
 
-export default class EditPointView extends AbstractView {
-  #point = null;
+export default class EditPointView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupBtnClick = null;
 
-  constructor({point, onFormSubmit, onRollupBtnClick}) {
+  constructor({point = defaultNewPoint, onFormSubmit, onRollupBtnClick}) {
     super();
-    this.#point = point;
+    this._setState(EditPointView.parsePointToState(point));
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
 
@@ -134,12 +147,16 @@ export default class EditPointView extends AbstractView {
   }
 
   get template() {
-    return createEditPointTemplate(this.#point);
+    return createEditPointTemplate(this._state);
   }
+
+  static parsePointToState = (point) => ({ ...point });
+
+  static parseStateToPoint = (state) => ({ ...state });
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
   #rollupButtonClickHandler = (evt) => {
