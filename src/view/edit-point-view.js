@@ -159,17 +159,22 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
 
+    this._restoreHandlers();
+  }
+
+
+  get template() {
+    return createEditPointTemplate(this._state, this.#destinations);
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#rollupButtonClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
-    // this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    // this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
-  }
-
-  get template() {
-    return createEditPointTemplate(this._state, this.#destinations);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    //this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
   }
 
   static parsePointToState = (point) => ({ ...point });
@@ -198,22 +203,22 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
 
-  // #destinationChangeHandler = (evt) => {
-  //   evt.preventDefault();
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
 
-  //   if (!evt.target.value) {
-  //     this.updateElement({
-  //       destination: ''
-  //     });
-  //     return;
-  //   }
-  //   const selectedDestination = this.#destinations
-  //     .find((destination) => evt.target.value === destination.name);
+    if (!evt.target.value) {
+      this.updateElement({
+        destination: ''
+      });
+      return;
+    }
+    const selectedDestination = this.#destinations
+      .find((destination) => evt.target.value === destination.name);
 
-  //   this.updateElement({
-  //     destination: selectedDestination.id
-  //   });
-  // };
+    this.updateElement({
+      destination: selectedDestination.id
+    });
+  };
 
   // #offerChangeHandler = (evt) => {
   //   evt.preventDefault();
