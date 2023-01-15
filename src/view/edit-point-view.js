@@ -1,4 +1,4 @@
-import { destinations, offersByType } from '../mock/point.js';
+import { offersByType } from '../mock/point.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getDate } from '../utils/dates.js';
 import dayjs from 'dayjs';
@@ -17,7 +17,7 @@ const defaultNewPoint = {
   type: 'taxi'
 };
 
-const createEditPointTemplate = (point) => {
+const createEditPointTemplate = (point, {destinations}) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
   const pointTypeOffer = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -150,10 +150,12 @@ const createEditPointTemplate = (point) => {
 export default class EditPointView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupBtnClick = null;
+  #destinations = null;
 
-  constructor({point = defaultNewPoint, onFormSubmit, onRollupBtnClick}) {
+  constructor({point = defaultNewPoint, destinations, onFormSubmit, onRollupBtnClick}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
+    this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
 
@@ -161,10 +163,13 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#rollupButtonClickHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
+    // this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    // this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
   }
 
   get template() {
-    return createEditPointTemplate(this._state);
+    return createEditPointTemplate(this._state, this.#destinations);
   }
 
   static parsePointToState = (point) => ({ ...point });
@@ -180,4 +185,49 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.#handleRollupBtnClick();
   };
+
+  #pointTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    if (evt.target.tagName === 'INPUT') {
+      this.updateElement({
+        type: evt.target.value,
+        offers: []
+      });
+    }
+  };
+
+
+  // #destinationChangeHandler = (evt) => {
+  //   evt.preventDefault();
+
+  //   if (!evt.target.value) {
+  //     this.updateElement({
+  //       destination: ''
+  //     });
+  //     return;
+  //   }
+  //   const selectedDestination = this.#destinations
+  //     .find((destination) => evt.target.value === destination.name);
+
+  //   this.updateElement({
+  //     destination: selectedDestination.id
+  //   });
+  // };
+
+  // #offerChangeHandler = (evt) => {
+  //   evt.preventDefault();
+
+  //   if (evt.target.tagName === 'INPUT') {
+  //     const currentOfferId = Number(evt.target.dataset.offerId);
+  //     const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+
+  //     if (currentOfferIndex === -1) {
+  //       this._state.offers.push(currentOfferId);
+  //       return;
+  //     }
+
+  //     this._state.offers.splice(currentOfferIndex, 1);
+  //   }
+  // };
 }

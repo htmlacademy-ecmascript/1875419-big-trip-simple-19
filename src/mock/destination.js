@@ -30,7 +30,7 @@ const getPicture = () => ({
 const getDestination = (index) =>({
   id: ++index,
   description: getRandomDestinationDescription(),
-  name: getRandomArrayElement(CITIES_NAMES),
+  name: CITIES_NAMES[--index],
   pictures: Array.from({ length: getRandomInteger(Pictures.MIN_COUNT, Pictures.MAX_COUNT) }, getPicture)
 });
 
