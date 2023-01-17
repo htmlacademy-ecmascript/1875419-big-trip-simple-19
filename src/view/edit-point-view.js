@@ -19,7 +19,7 @@ const defaultNewPoint = {
 
 const createEditPointTemplate = (point, {destinations}) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
-  const pointTypeOffer = offersByType.find((offer) => offer.type === type);
+  const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
 
 
@@ -32,11 +32,18 @@ const createEditPointTemplate = (point, {destinations}) => {
 
   const offersTemplate = () => {
     let template = '';
-    if (pointTypeOffer) {
-      template = pointTypeOffer.offers
+    if (pointTypeOffers) {
+      template = pointTypeOffers.offers
         .map((offer) =>
           `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.type}-${offer.id}" type="checkbox" name=${offer.title} ${offers.includes(offer.id) ? 'checked' : ''}>
+            <input class="event__offer-checkbox  
+            visually-hidden" 
+            id="event-offer-${offer.type}-${offer.id}" 
+            type="checkbox" 
+            name=${offer.title} 
+            ${offers.includes(offer.id) ? 'checked' : ''}
+            data-offer-id="${offer.id}"
+            >
             <label class="event__offer-label" for="event-offer-${offer.type}-${offer.id}">
               <span class="event__offer-title">${offer.title}</span>
               &plus;&euro;&nbsp;
@@ -60,7 +67,7 @@ const createEditPointTemplate = (point, {destinations}) => {
       </div>
     </section>`;
 
-    if (pointTypeOffer.offers.length === 0) {
+    if (pointTypeOffers.offers.length === 0) {
       template = '';
     }
     return template;
@@ -174,7 +181,7 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('click', this.#rollupButtonClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    //this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
   }
 
   static parsePointToState = (point) => ({ ...point });
@@ -205,6 +212,8 @@ export default class EditPointView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
+    const {destinations} = this.#destinationsModel;
+
 
     if (!evt.target.value) {
       this.updateElement({
@@ -212,7 +221,7 @@ export default class EditPointView extends AbstractStatefulView {
       });
       return;
     }
-    const selectedDestination = this.#destinationsModel
+    const selectedDestination = destinations
       .find((destination) => evt.target.value === destination.name);
 
     this.updateElement({
@@ -220,19 +229,23 @@ export default class EditPointView extends AbstractStatefulView {
     });
   };
 
-  // #offerChangeHandler = (evt) => {
-  //   evt.preventDefault();
+  #offerChangeHandler = (evt) => {
+    evt.preventDefault();
 
-  //   if (evt.target.tagName === 'INPUT') {
-  //     const currentOfferId = Number(evt.target.dataset.offerId);
-  //     const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+    if (evt.target.tagName === 'INPUT') {
+      const currentOfferId = Number(evt.target.dataset.offerId);
+      const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
 
-  //     if (currentOfferIndex === -1) {
-  //       this._state.offers.push(currentOfferId);
-  //       return;
-  //     }
+      if (currentOfferIndex === -1) {
+        this._state.offers.push(currentOfferId);
+        return;
+      }
 
-  //     this._state.offers.splice(currentOfferIndex, 1);
-  //   }
-  // };
+      this._state.offers.splice(currentOfferIndex, 1);
+    }
+  };
+
+  reset = (point) => {
+    this.updateElement(EditPointView.parsePointToState(point));
+  };
 }

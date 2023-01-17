@@ -63,8 +63,6 @@ export default class TripPresenter {
     //пока скрыла новую точку, чтобы потом добавлять ее по клику. еще не разобралась как
     //render(new NewPointView(), this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
 
-    //это я таким способом только смогла придумать, как изначально отсортировать точки модели и отрисовать их в нужном порядке
-
     this.#sourcedBoardPoints.forEach((point) => this.#renderPoint(point));
   }
 
