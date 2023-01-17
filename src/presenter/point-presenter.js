@@ -12,33 +12,31 @@ export default class PointPresenter {
   #pointComponent = null;
   #pointEditComponent = null;
   #handleModeChange = null;
-  #allDestinations = null;
+  #destinationsModel = null;
 
   #point = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointsContainer, onModeChange, allDestinations}) {
+  constructor({pointsContainer, onModeChange, destinationsModel}) {
     this.#pointsContainer = pointsContainer;
     this.#handleModeChange = onModeChange;
-    this.#allDestinations = allDestinations;
+    this.#destinationsModel = destinationsModel;
   }
 
-  init(point, destinations) {
+  init(point) {
     this.#point = point;
-    this.#allDestinations = destinations;
-
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView ({
       point: this.#point,
-      destinations: this.#allDestinations,
+      destinationsModel: this.#destinationsModel,
       onRollupBtnClick: this.#handleEditClick
     });
 
     this.#pointEditComponent = new EditPointView ({
       point: this.#point,
-      destinations: this.#allDestinations,
+      destinationsModel: this.#destinationsModel,
       onFormSubmit: this.#handleFormSubmit,
       onRollupBtnClick: this.#handleRollupBtnClick
     });

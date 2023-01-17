@@ -150,12 +150,12 @@ const createEditPointTemplate = (point, {destinations}) => {
 export default class EditPointView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupBtnClick = null;
-  #destinations = null;
+  #destinationsModel = null;
 
-  constructor({point = defaultNewPoint, destinations, onFormSubmit, onRollupBtnClick}) {
+  constructor({point = defaultNewPoint, destinationsModel, onFormSubmit, onRollupBtnClick}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
-    this.#destinations = destinations;
+    this.#destinationsModel = destinationsModel;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
 
@@ -164,7 +164,7 @@ export default class EditPointView extends AbstractStatefulView {
 
 
   get template() {
-    return createEditPointTemplate(this._state, this.#destinations);
+    return createEditPointTemplate(this._state, this.#destinationsModel);
   }
 
   _restoreHandlers() {
@@ -212,7 +212,7 @@ export default class EditPointView extends AbstractStatefulView {
       });
       return;
     }
-    const selectedDestination = this.#destinations
+    const selectedDestination = this.#destinationsModel
       .find((destination) => evt.target.value === destination.name);
 
     this.updateElement({

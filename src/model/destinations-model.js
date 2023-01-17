@@ -1,10 +1,10 @@
-import { getDestination } from '../mock/destination.js';
-
-const DESTINATIONS_COUNT = 6;
-
 export default class DestinationsModel {
 
-  #destinations = Array.from({ length: DESTINATIONS_COUNT }, (value, index) => getDestination(index));
+  #destinations = null;
+
+  constructor(destinations) {
+    this.#destinations = destinations;
+  }
 
   get destinations() {
     return this.#destinations;

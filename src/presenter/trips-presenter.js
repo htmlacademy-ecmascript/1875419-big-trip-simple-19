@@ -81,7 +81,7 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter ({
       pointsContainer: this.#pointListComponent.element,
       onModeChange: this.#handleModeChange,
-      allDestinations: this.#destinationsModel
+      destinationsModel: this.#destinationsModel
     });
 
     pointPresenter.init(point, this.#destinationsModel);
