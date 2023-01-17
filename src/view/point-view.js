@@ -1,9 +1,8 @@
-import { offersByType } from '../mock/point.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import { getDayAndMonth, getTime } from '../utils/dates.js';
 
 
-const createPointTemplate = (point, {destinations}) => {
+const createPointTemplate = (point, {destinations}, {offersByType}) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo} = point;
   const pointTypeOffer = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -71,7 +70,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
-    return createPointTemplate(this.#point, this.#destinationsModel);
+    return createPointTemplate(this.#point, this.#destinationsModel, this.#destinationsModel);
   }
 
   #rollupBtnClickHandler = (evt) => {

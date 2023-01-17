@@ -1,4 +1,3 @@
-import { offersByType } from '../mock/point.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getDate } from '../utils/dates.js';
 import dayjs from 'dayjs';
@@ -17,7 +16,7 @@ const defaultNewPoint = {
   type: 'taxi'
 };
 
-const createEditPointTemplate = (point, {destinations}) => {
+const createEditPointTemplate = (point, {destinations}, {offersByType}) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -38,13 +37,13 @@ const createEditPointTemplate = (point, {destinations}) => {
           `<div class="event__offer-selector">
             <input class="event__offer-checkbox  
             visually-hidden" 
-            id="event-offer-${offer.type}-${offer.id}" 
+            id="event-offer-${type}-${offer.id}" 
             type="checkbox" 
-            name=${offer.title} 
+            name="${offer.title}" 
             ${offers.includes(offer.id) ? 'checked' : ''}
             data-offer-id="${offer.id}"
             >
-            <label class="event__offer-label" for="event-offer-${offer.type}-${offer.id}">
+            <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
               <span class="event__offer-title">${offer.title}</span>
               &plus;&euro;&nbsp;
               <span class="event__offer-price">${offer.price}</span>
@@ -172,7 +171,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   get template() {
 
-    return createEditPointTemplate(this._state, this.#destinationsModel);
+    return createEditPointTemplate(this._state, this.#destinationsModel, this.#destinationsModel);
   }
 
   _restoreHandlers() {
@@ -183,12 +182,10 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
 
-    const offersByTypes = this.#destinationsModel.offersByType;
-    const pointOffers = offersByTypes.find((offer) => offer.type === this._state.type);
-    console.log(pointOffers);
-
+    //обработчик добавляется, только если у точки маршрута есть доп предложения
+    const pointOffers = this.#destinationsModel.offersByType.find((offer) => offer.type === this._state.type);
     if (pointOffers.offers.length) {
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+      this.element.querySelector('.event__available-offers').addEventListener('input', this.#offerChangeHandler);
     }
   }
 
@@ -251,9 +248,5 @@ export default class EditPointView extends AbstractStatefulView {
 
       this._state.offers.splice(currentOfferIndex, 1);
     }
-  };
-
-  reset = (point) => {
-    this.updateElement(EditPointView.parsePointToState(point));
   };
 }

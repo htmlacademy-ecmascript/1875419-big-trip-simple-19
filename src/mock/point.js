@@ -12,11 +12,9 @@ const BasePrice = {
 
 const POINTS_COUNT = 5;
 
-//если делать это в функции, то генерируются разные массивы в представлениях point-view и edit-point-view, что ломает правильное отображение данных на странице. Поэтому  удобнее оставить данные в костантах.
-const offersByType = getOffersByTypes();
 
 const getRandomOffersIds = () => {
-  const randomOffers = getRandomArrayElement(offersByType).offers;
+  const randomOffers = getRandomArrayElement(getOffersByTypes()).offers;
 
   const ids = [];
   const lengthOfArray = getRandomInteger(MIN_ARRAY_LENGTH, randomOffers.length);
@@ -46,4 +44,4 @@ const getRandomPoint = () => {
 
 const getMockPoints = () => (Array.from({length: POINTS_COUNT}, (value, index) => getRandomPoint(index)));
 
-export {getRandomPoint, offersByType, getMockPoints};
+export {getRandomPoint, getMockPoints};
