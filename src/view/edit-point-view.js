@@ -171,6 +171,7 @@ export default class EditPointView extends AbstractStatefulView {
 
 
   get template() {
+
     return createEditPointTemplate(this._state, this.#destinationsModel);
   }
 
@@ -181,7 +182,14 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('click', this.#rollupButtonClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+
+    const offersByTypes = this.#destinationsModel.offersByType;
+    const pointOffers = offersByTypes.find((offer) => offer.type === this._state.type);
+    console.log(pointOffers);
+
+    if (pointOffers.offers.length) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+    }
   }
 
   static parsePointToState = (point) => ({ ...point });
