@@ -18,7 +18,7 @@ const defaultNewPoint = {
   type: 'taxi'
 };
 
-const createEditPointTemplate = (point, {destinations}, {offersByType}) => {
+const createEditPointTemplate = (point, destinations, offersByType) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -158,14 +158,16 @@ const createEditPointTemplate = (point, {destinations}, {offersByType}) => {
 export default class EditPointView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleRollupBtnClick = null;
-  #destinationsModel = null;
+  #allDestinations = null;
+  #allOffers = null;
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  constructor({point = defaultNewPoint, destinationsModel, onFormSubmit, onRollupBtnClick}) {
+  constructor({point = defaultNewPoint, allDestinations, allOffers, onFormSubmit, onRollupBtnClick}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
-    this.#destinationsModel = destinationsModel;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
 
@@ -175,7 +177,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   get template() {
 
-    return createEditPointTemplate(this._state, this.#destinationsModel, this.#destinationsModel);
+    return createEditPointTemplate(this._state, this.#allDestinations, this.#allOffers);
   }
 
   _restoreHandlers() {
@@ -187,7 +189,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
 
     //обработчик добавляется, только если у точки маршрута есть доп предложения
-    const pointOffers = this.#destinationsModel.offersByType.find((offer) => offer.type === this._state.type);
+    const pointOffers = this.#allOffers.find((offer) => offer.type === this._state.type);
     if (pointOffers.offers.length) {
       this.element.querySelector('.event__available-offers').addEventListener('input', this.#offerChangeHandler);
     }
@@ -224,7 +226,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
-    const {destinations} = this.#destinationsModel;
+    const destinations = this.#allDestinations;
 
 
     if (!evt.target.value) {

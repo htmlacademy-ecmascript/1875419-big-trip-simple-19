@@ -18,7 +18,9 @@ export default class TripPresenter {
   #listPoints = [];
   #pointsContainer = null;
   #pointsModel = null;
-  #destinationsModel = null;
+  #destinationsAndOffersModel = null;
+  #allDestinations = null;
+  #allOffers = null;
   #sortComponent = null;
   #sortOptions = getSort();
   #currentSortType = SortType.DAY;
@@ -32,10 +34,12 @@ export default class TripPresenter {
   #headerContainer = null;
 
 
-  constructor({pointsContainer, pointsModel, destinationsModel, filteredPoints, headerFiltersElement}) {
+  constructor({pointsContainer, pointsModel, destinationsAndOffersModel, filteredPoints, headerFiltersElement}) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
-    this.#destinationsModel = destinationsModel;
+    this.#destinationsAndOffersModel = destinationsAndOffersModel;
+    this.#allDestinations = this.#destinationsAndOffersModel.destinations;
+    this.#allOffers = this.#destinationsAndOffersModel.offersByType;
     this.#filteredPoints = filteredPoints;
     this.#headerContainer = headerFiltersElement;
   }
@@ -43,6 +47,8 @@ export default class TripPresenter {
   init() {
     this.#listPoints = [...this.#pointsModel.points];
     this.#sourcedBoardPoints = [...this.#pointsModel.sortedPointsByDay];
+    // this.#allDestinations = this.#destinationsAndOffersModel.destinations;
+    // this.#allOffers = this.#destinationsAndOffersModel.offersByType;
 
     this.#renderPointsList();
     this.#renderSort();
@@ -79,10 +85,10 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter ({
       pointsContainer: this.#pointListComponent.element,
       onModeChange: this.#handleModeChange,
-      destinationsModel: this.#destinationsModel
+      //allDestinations: this.#destinationsAndOffersModel.destinations
     });
 
-    pointPresenter.init(point, this.#destinationsModel);
+    pointPresenter.init(point, this.#allDestinations, this.#allOffers);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 

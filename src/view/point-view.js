@@ -2,7 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { getDayAndMonth, getTime } from '../utils/dates.js';
 
 
-const createPointTemplate = (point, {destinations}, {offersByType}) => {
+const createPointTemplate = (point, destinations, offersByType) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo} = point;
   const pointTypeOffer = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -56,13 +56,15 @@ const createPointTemplate = (point, {destinations}, {offersByType}) => {
 
 export default class PointView extends AbstractView {
   #point = null;
-  #destinationsModel = null;
+  #allDestinations = null;
+  #allOffers = null;
   #handleRollupBtnClick = null;
 
-  constructor({point, destinationsModel, onRollupBtnClick}) {
+  constructor({point, allDestinations, allOffers, onRollupBtnClick}) {
     super();
     this.#point = point;
-    this.#destinationsModel = destinationsModel;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
     this.#handleRollupBtnClick = onRollupBtnClick;
 
     this.element.querySelector('.event__rollup-btn')
@@ -70,7 +72,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
-    return createPointTemplate(this.#point, this.#destinationsModel, this.#destinationsModel);
+    return createPointTemplate(this.#point, this.#allDestinations, this.#allOffers);
   }
 
   #rollupBtnClickHandler = (evt) => {
