@@ -1,9 +1,8 @@
-import { destinations, offersByType } from '../mock/point.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import { getDayAndMonth, getTime } from '../utils/dates.js';
 
 
-const createPointTemplate = (point) =>{
+const createPointTemplate = (point, {destinations}, {offersByType}) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo} = point;
   const pointTypeOffer = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -12,7 +11,7 @@ const createPointTemplate = (point) =>{
   `<li class="event__offer">
     <span class="event__offer-title">No additional offers</span>
   </li>`;
-  if (pointTypeOffer) {
+  if (pointTypeOffer.offers.length !== 0) {
     offersTemplate = pointTypeOffer.offers
       .filter((offer) => offers.includes(offer.id))
       .map((offer) =>
@@ -57,11 +56,13 @@ const createPointTemplate = (point) =>{
 
 export default class PointView extends AbstractView {
   #point = null;
+  #destinationsModel = null;
   #handleRollupBtnClick = null;
 
-  constructor({point, onRollupBtnClick}) {
+  constructor({point, destinationsModel, onRollupBtnClick}) {
     super();
     this.#point = point;
+    this.#destinationsModel = destinationsModel;
     this.#handleRollupBtnClick = onRollupBtnClick;
 
     this.element.querySelector('.event__rollup-btn')
@@ -69,7 +70,7 @@ export default class PointView extends AbstractView {
   }
 
   get template() {
-    return createPointTemplate(this.#point);
+    return createPointTemplate(this.#point, this.#destinationsModel, this.#destinationsModel);
   }
 
   #rollupBtnClickHandler = (evt) => {

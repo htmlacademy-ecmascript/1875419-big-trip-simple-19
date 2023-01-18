@@ -12,28 +12,31 @@ export default class PointPresenter {
   #pointComponent = null;
   #pointEditComponent = null;
   #handleModeChange = null;
+  #destinationsModel = null;
 
   #point = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointsContainer, onModeChange}) {
+  constructor({pointsContainer, onModeChange, destinationsModel}) {
     this.#pointsContainer = pointsContainer;
     this.#handleModeChange = onModeChange;
+    this.#destinationsModel = destinationsModel;
   }
 
   init(point) {
     this.#point = point;
-
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView ({
       point: this.#point,
+      destinationsModel: this.#destinationsModel,
       onRollupBtnClick: this.#handleEditClick
     });
 
     this.#pointEditComponent = new EditPointView ({
       point: this.#point,
+      destinationsModel: this.#destinationsModel,
       onFormSubmit: this.#handleFormSubmit,
       onRollupBtnClick: this.#handleRollupBtnClick
     });
@@ -62,6 +65,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceEditFormToPoint();
     }
   }
@@ -83,6 +87,7 @@ export default class PointPresenter {
   #escKeydownHandler = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceEditFormToPoint();
     }
   };
@@ -96,6 +101,7 @@ export default class PointPresenter {
   };
 
   #handleRollupBtnClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceEditFormToPoint();
   };
 }

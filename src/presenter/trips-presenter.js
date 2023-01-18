@@ -18,6 +18,7 @@ export default class TripPresenter {
   #listPoints = [];
   #pointsContainer = null;
   #pointsModel = null;
+  #destinationsModel = null;
   #sortComponent = null;
   #sortOptions = getSort();
   #currentSortType = SortType.DAY;
@@ -29,19 +30,19 @@ export default class TripPresenter {
   #filterComponent = null;
   #sourcedBoardPoints = [];
   #headerContainer = null;
-  #defaultSorteddPoints = [];
 
 
-  constructor({pointsContainer, pointsModel, filteredPoints, headerFiltersElement}) {
+  constructor({pointsContainer, pointsModel, destinationsModel, filteredPoints, headerFiltersElement}) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
+    this.#destinationsModel = destinationsModel;
     this.#filteredPoints = filteredPoints;
     this.#headerContainer = headerFiltersElement;
   }
 
   init() {
     this.#listPoints = [...this.#pointsModel.points];
-    this.#sourcedBoardPoints = [...this.#pointsModel.points];
+    this.#sourcedBoardPoints = [...this.#pointsModel.sortedPointsByDay];
 
     this.#renderPointsList();
     this.#renderSort();
@@ -62,11 +63,7 @@ export default class TripPresenter {
     //пока скрыла новую точку, чтобы потом добавлять ее по клику. еще не разобралась как
     //render(new NewPointView(), this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
 
-    //это я таким способом только смогла придумать, как изначально отсортировать точки модели и отрисовать их в нужном порядке
-    this.#defaultSorteddPoints = [...this.#sourcedBoardPoints];
-    this.#defaultSorteddPoints = getSortedPoints(this.#defaultSorteddPoints, SortType.DAY);
-
-    this.#defaultSorteddPoints.forEach((point) => this.#renderPoint(point));
+    this.#sourcedBoardPoints.forEach((point) => this.#renderPoint(point));
   }
 
   #renderEmptyList() {
@@ -81,10 +78,11 @@ export default class TripPresenter {
 
     const pointPresenter = new PointPresenter ({
       pointsContainer: this.#pointListComponent.element,
-      onModeChange: this.#handleModeChange
+      onModeChange: this.#handleModeChange,
+      destinationsModel: this.#destinationsModel
     });
 
-    pointPresenter.init(point);
+    pointPresenter.init(point, this.#destinationsModel);
     this.#pointPresenter.set(point.id, pointPresenter);
   }
 
