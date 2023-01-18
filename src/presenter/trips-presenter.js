@@ -47,8 +47,6 @@ export default class TripPresenter {
   init() {
     this.#listPoints = [...this.#pointsModel.points];
     this.#sourcedBoardPoints = [...this.#pointsModel.sortedPointsByDay];
-    // this.#allDestinations = this.#destinationsAndOffersModel.destinations;
-    // this.#allOffers = this.#destinationsAndOffersModel.offersByType;
 
     this.#renderPointsList();
     this.#renderSort();
@@ -85,7 +83,6 @@ export default class TripPresenter {
     const pointPresenter = new PointPresenter ({
       pointsContainer: this.#pointListComponent.element,
       onModeChange: this.#handleModeChange,
-      //allDestinations: this.#destinationsAndOffersModel.destinations
     });
 
     pointPresenter.init(point, this.#allDestinations, this.#allOffers);

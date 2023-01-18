@@ -12,7 +12,6 @@ export default class PointPresenter {
   #pointComponent = null;
   #pointEditComponent = null;
   #handleModeChange = null;
-  #destinationsAndOffersModel = null;
   #allDestinations = null;
   #allOffers = null;
 
@@ -22,8 +21,6 @@ export default class PointPresenter {
   constructor({pointsContainer, onModeChange}) {
     this.#pointsContainer = pointsContainer;
     this.#handleModeChange = onModeChange;
-    // this.#allDestinations = destinationsAndOffersModel.destinations;
-    // this.#allOffers = destinationsAndOffersModel.offersByType
   }
 
   init(point, allDestinations, allOffers) {
