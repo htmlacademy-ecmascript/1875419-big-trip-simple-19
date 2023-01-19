@@ -84,6 +84,24 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
     return template;
   };
 
+  const destinationSectionTemplate = () => {
+    let template =
+          `<section class="event__section  event__section--destination">
+            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+            <p class="event__destination-description">${pointDestination.description}</p>
+
+            <div class="event__photos-container">
+              <div class="event__photos-tape">
+                ${picturesTemplate()}
+              </div>
+            </div>
+          </section>`;
+    if (!pointDestination) {
+      template = '';
+    }
+    return template;
+  };
+
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -139,16 +157,7 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
         <section class="event__details">
           ${offersSectionTemplate()}
 
-          <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${pointDestination.description}</p>
-
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${picturesTemplate()}
-              </div>
-            </div>
-          </section>
+          ${destinationSectionTemplate()}
         </section>
       </form>
     </li>`
@@ -190,8 +199,9 @@ export default class EditPointView extends AbstractStatefulView {
 
     //обработчик добавляется, только если у точки маршрута есть доп предложения
     const pointOffers = this.#allOffers.find((offer) => offer.type === this._state.type);
+
     if (pointOffers.offers.length) {
-      this.element.querySelector('.event__available-offers').addEventListener('input', this.#offerChangeHandler);
+      this.element.querySelector('.event__offer-checkbox').addEventListener('change', this.#offerChangeHandler);
     }
 
     this.#setDateFromPicker();

@@ -53,6 +53,10 @@ export default class TripPresenter {
     this.#renderFilter();
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   #handleModeChange = () => {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
