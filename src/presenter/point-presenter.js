@@ -2,6 +2,7 @@ import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import { render, replace, remove } from '../framework/render.js';
 import { isEscapeKey } from '../util.js';
+import { UserAction, UpdateType } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -11,6 +12,7 @@ export default class PointPresenter {
   #pointsContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
+  #handleDataChange = null;
   #handleModeChange = null;
   #allDestinations = null;
   #allOffers = null;
@@ -18,8 +20,9 @@ export default class PointPresenter {
   #point = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointsContainer, onModeChange}) {
+  constructor({pointsContainer, onDataChange, onModeChange}) {
     this.#pointsContainer = pointsContainer;
+    this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
@@ -100,7 +103,13 @@ export default class PointPresenter {
     this.#replacePointToEditForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+
     this.#replaceEditFormToPoint();
   };
 
