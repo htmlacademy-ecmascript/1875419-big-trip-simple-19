@@ -10,9 +10,12 @@ const getDayAndMonth = (date) => parseDate(date).format(DATE_FORMAT_DATE_AND_MON
 const getTime = (date) => parseDate(date).format(DATE_FORMAT_TIME);
 const getDate = (date) => parseDate(date).format(DATE_FORMAT);
 
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
 
 export {
   getDate,
   getDayAndMonth,
-  getTime
+  getTime,
+  isDatesEqual
 };

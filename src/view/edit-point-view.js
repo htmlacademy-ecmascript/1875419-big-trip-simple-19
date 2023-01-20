@@ -171,14 +171,16 @@ export default class EditPointView extends AbstractStatefulView {
   #allOffers = null;
   #datepickerFrom = null;
   #datepickerTo = null;
+  #handleDeleteClick = null;
 
-  constructor({point = defaultNewPoint, allDestinations, allOffers, onFormSubmit, onRollupBtnClick}) {
+  constructor({point = defaultNewPoint, allDestinations, allOffers, onFormSubmit, onRollupBtnClick, onDeleteClick}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#allDestinations = allDestinations;
     this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -194,9 +196,12 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#rollupButtonClickHandler);
-    this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#pointTypeChangeHandler);
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
     //обработчик добавляется, только если у точки маршрута есть доп предложения
     const pointOffers = this.#allOffers.find((offer) => offer.type === this._state.type);
 
@@ -327,5 +332,10 @@ export default class EditPointView extends AbstractStatefulView {
         time24hr: true
       }
     );
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 }

@@ -116,6 +116,8 @@ export default class TripPresenter {
 
     const pointPresenter = new PointPresenter ({
       pointsContainer: this.#pointListComponent.element,
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
@@ -152,7 +154,7 @@ export default class TripPresenter {
     // this.#sortPoints(this.#currentSortType);
     this.#filteredPoints = getFilteredPointsByType(this.#pointsModel.points, filterType);
     this.#currentFilterType = filterType;
-    this.#clearPointList();
+    // this.#clearPointList();
     this.#renderFilteredPoints();
   };
 
@@ -175,10 +177,10 @@ export default class TripPresenter {
   };
 
 
-  #clearPointList() {
-    this.#pointPresenter.forEach((presenter) => presenter.destroy());
-    this.#pointPresenter.clear();
-  }
+  // #clearPointList() {
+  //   this.#pointPresenter.forEach((presenter) => presenter.destroy());
+  //   this.#pointPresenter.clear();
+  // }
 
   #clearTripRoute({ resetSortType = false } = {}) {
 

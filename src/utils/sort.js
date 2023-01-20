@@ -21,5 +21,10 @@ const getSortedPoints = (points, sortType) => {
   }
 };
 
+const isPriceEqual = (priceA, priceB) => (priceA === null && priceB === null) || (priceA === priceB);
 
-export { options, getSortedPoints };
+export {
+  options,
+  getSortedPoints,
+  isPriceEqual
+};
