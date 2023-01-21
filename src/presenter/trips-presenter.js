@@ -61,10 +61,6 @@ export default class TripPresenter {
     return filteredPoints;
   }
 
-  #handleModeChange = () => {
-    this.#pointPresenter.forEach((presenter) => presenter.resetView());
-  };
-
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
@@ -138,6 +134,10 @@ export default class TripPresenter {
     this.#renderTripRoute();
   };
 
+  #handleModeChange = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.resetView());
+  };
+
 
   #clearTripRoute({ resetSortType = false } = {}) {
 
@@ -145,7 +145,10 @@ export default class TripPresenter {
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noPointComponent);
+
+    if (this.#noPointComponent) {
+      remove(this.#noPointComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;

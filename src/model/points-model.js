@@ -19,7 +19,7 @@ export default class PointsModel extends Observable {
   }
 
 
-  updatePoint(updateType, update) {
+  updatePoint = (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
@@ -33,18 +33,18 @@ export default class PointsModel extends Observable {
     ];
 
     this._notify(updateType, update);
-  }
+  };
 
-  addPoint(updateType, update) {
+  addPoint = (updateType, update) => {
     this.#points = [
       update,
       ...this.#points,
     ];
 
     this._notify(updateType, update);
-  }
+  };
 
-  deletePoint(updateType, update) {
+  deletePoint = (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
@@ -57,5 +57,5 @@ export default class PointsModel extends Observable {
     ];
 
     this._notify(updateType);
-  }
+  };
 }

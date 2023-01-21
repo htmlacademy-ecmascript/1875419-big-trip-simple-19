@@ -12,7 +12,7 @@ const defaultNewPoint = {
   basePrice: 0,
   dateFrom: DEFAULT_START_DATE,
   dateTo: DEFAULT_END_DATE,
-  destination: 1,
+  destination: null,
   id: 0,
   offers: [],
   type: 'taxi'
@@ -202,12 +202,10 @@ export default class EditPointView extends AbstractStatefulView {
       .addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__reset-btn')
       .addEventListener('click', this.#formDeleteClickHandler);
-    //обработчик добавляется, только если у точки маршрута есть доп предложения
-    const pointOffers = this.#allOffers.find((offer) => offer.type === this._state.type);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceChangeHandler);
+    this.element.querySelectorAll('.event__offer-selector input')
+      .forEach((offer) => offer.addEventListener('change', this.#offerChangeHandler));
 
-    if (pointOffers.offers.length) {
-      this.element.querySelector('.event__offer-checkbox').addEventListener('change', this.#offerChangeHandler);
-    }
 
     this.#setDateFromPicker();
     this.#setDateToPicker();
@@ -258,20 +256,32 @@ export default class EditPointView extends AbstractStatefulView {
     });
   };
 
-  #offerChangeHandler = (evt) => {
+  #priceChangeHandler = (evt) => {
     evt.preventDefault();
 
-    if (evt.target.tagName === 'INPUT') {
-      const currentOfferId = Number(evt.target.dataset.offerId);
-      const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+    const price = Number(evt.target.value);
+    evt.target.value = isNaN(price) ? this._state.basePrice : price;
 
-      if (currentOfferIndex === -1) {
-        this._state.offers.push(currentOfferId);
-        return;
-      }
+    this._setState({
+      basePrice: evt.target.value
+    });
+  };
 
-      this._state.offers.splice(currentOfferIndex, 1);
+  #offerChangeHandler = (evt) => {
+    evt.preventDefault();
+    evt.target.toggleAttribute('checked');
+
+    let selectedOffers = this._state.offers;
+
+    if (evt.target.hasAttribute('checked')) {
+      selectedOffers.push(+(evt.target.dataset.offerId));
+    } else {
+      selectedOffers = selectedOffers.filter((id) => id !== +(evt.target.dataset.offerId));
     }
+
+    this._setState({
+      offers: selectedOffers
+    });
   };
 
   reset = (point) => {

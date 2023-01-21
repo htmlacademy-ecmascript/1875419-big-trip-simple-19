@@ -18,7 +18,6 @@ export default class PointPresenter {
   #handleModeChange = null;
   #allDestinations = null;
   #allOffers = null;
-
   #point = null;
   #mode = Mode.DEFAULT;
 
@@ -56,13 +55,15 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === Mode.EDITING) {
+
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#pointsContainer.contains(prevPointEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#pointEditComponent, prevPointEditComponent);
     }
+
 
     remove(prevPointComponent);
     remove(prevPointEditComponent);
