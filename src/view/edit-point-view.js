@@ -22,7 +22,7 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
-
+  const destinationName = destination !== null ? pointDestination.name : '';
 
   const tripOptionsList = offersByType.map((element) =>
     `<div class="event__type-item">
@@ -85,19 +85,19 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
   };
 
   const destinationSectionTemplate = () => {
-    let template =
-          `<section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${pointDestination.description}</p>
+    let template = '';
+    if (pointDestination) {
+      template =
+      `<section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${pointDestination.description}</p>
 
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${picturesTemplate()}
-              </div>
-            </div>
-          </section>`;
-    if (!pointDestination) {
-      template = '';
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${picturesTemplate()}
+          </div>
+        </div>
+      </section>`;
     }
     return template;
   };
@@ -125,7 +125,7 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
             <label class="event__label  event__type-output" for="event-destination-${id}">
             ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-${id}">
+            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}">
             <datalist id="destination-list-${id}">
             ${destinationToChoose}
             </datalist>

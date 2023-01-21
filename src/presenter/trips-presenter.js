@@ -1,5 +1,6 @@
 import PointListView from '../view/points-view.js';
-import ListEmptyView from '../view/empty-view.js';
+import NoPointsView from '../view/no-points-view.js';
+import NewPointPresenter from './new-point-presenter.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
 import ListSortView from '../view/sort-view.js';
@@ -19,6 +20,7 @@ export default class TripPresenter {
   #allDestinations = null;
   #allOffers = null;
   #filterModel = null;
+  #newPointPresenter = null;
   #sortComponent = null;
   #sortOptions = getSort();
   #currentSortType = SortType.DAY;
@@ -28,7 +30,7 @@ export default class TripPresenter {
   #filterType = FilterType.EVERYTHING;
 
 
-  constructor({pointsContainer, pointsModel, destinationsAndOffersModel, filterModel, headerFiltersElement}) {
+  constructor({pointsContainer, pointsModel, destinationsAndOffersModel, filterModel, headerFiltersElement, onNewPointDestroy}) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
     this.#destinationsAndOffersModel = destinationsAndOffersModel;
@@ -37,6 +39,12 @@ export default class TripPresenter {
     this.#filterModel = filterModel;
     this.#headerContainer = headerFiltersElement;
 
+    this.#newPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#pointListComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy
+    });
+
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -44,6 +52,12 @@ export default class TripPresenter {
   init() {
 
     this.#renderTripRoute();
+  }
+
+  createPoint(destinationsAndOffersModel) {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init(destinationsAndOffersModel);
   }
 
   get points() {
@@ -94,7 +108,7 @@ export default class TripPresenter {
 
 
   #renderNoPoints() {
-    this.#noPointComponent = new ListEmptyView({
+    this.#noPointComponent = new NoPointsView({
       filterType: this.#filterType
     });
     render(this.#noPointComponent, this.#pointsContainer, RenderPosition.AFTERBEGIN);
@@ -135,6 +149,7 @@ export default class TripPresenter {
   };
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -143,6 +158,8 @@ export default class TripPresenter {
 
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
+    this.#newPointPresenter.destroy();
+
 
     remove(this.#sortComponent);
 
