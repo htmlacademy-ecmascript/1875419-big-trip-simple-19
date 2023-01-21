@@ -1,6 +1,5 @@
 import PointListView from '../view/points-view.js';
 import ListEmptyView from '../view/empty-view.js';
-//import NoFutureEventView from '../view/no-future-event-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
 import ListSortView from '../view/sort-view.js';
@@ -23,8 +22,6 @@ export default class TripPresenter {
   #sortComponent = null;
   #sortOptions = getSort();
   #currentSortType = SortType.DAY;
-  //#emptyListComponent = new ListEmptyView;
-  // #noFutureEventComponent = new NoFutureEventView;
   #pointPresenter = new Map();
   #headerContainer = null;
   #noPointComponent = null;
@@ -51,7 +48,7 @@ export default class TripPresenter {
 
   get points() {
     this.#filterType = this.#filterModel.filter;
-    const points = this.#pointsModel.points;
+    const points = [...this.#pointsModel.points];
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
@@ -75,10 +72,10 @@ export default class TripPresenter {
         this.#pointsModel.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addTask(updateType, update);
+        this.#pointsModel.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deleteTask(updateType, update);
+        this.#pointsModel.deletePoint(updateType, update);
         break;
     }
   };
@@ -107,9 +104,6 @@ export default class TripPresenter {
     render(this.#noPointComponent, this.#pointsContainer, RenderPosition.AFTERBEGIN);
   }
 
-  // #renderNoFutureEventMsg() {
-  //   render(this.#noFutureEventComponent, this.#pointsContainer);
-  // }
 
   #renderPoint(point) {
 
