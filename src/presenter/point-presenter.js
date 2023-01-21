@@ -2,6 +2,9 @@ import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import { render, replace, remove } from '../framework/render.js';
 import { isEscapeKey } from '../util.js';
+import { UserAction, UpdateType } from '../const.js';
+import { isDatesEqual } from '../utils/dates.js';
+import { isPriceEqual } from '../utils/sort.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -11,16 +14,20 @@ export default class PointPresenter {
   #pointsContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
+  #handleDataChange = null;
   #handleModeChange = null;
-  #destinationsModel = null;
+  #allDestinations = null;
+  #allOffers = null;
 
   #point = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointsContainer, onModeChange, destinationsModel}) {
+  constructor({pointsContainer, allDestinations, allOffers, onDataChange, onModeChange}) {
     this.#pointsContainer = pointsContainer;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
+    this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
-    this.#destinationsModel = destinationsModel;
   }
 
   init(point) {
@@ -30,15 +37,18 @@ export default class PointPresenter {
 
     this.#pointComponent = new PointView ({
       point: this.#point,
-      destinationsModel: this.#destinationsModel,
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
       onRollupBtnClick: this.#handleEditClick
     });
 
     this.#pointEditComponent = new EditPointView ({
       point: this.#point,
-      destinationsModel: this.#destinationsModel,
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
       onFormSubmit: this.#handleFormSubmit,
-      onRollupBtnClick: this.#handleRollupBtnClick
+      onRollupBtnClick: this.#handleRollupBtnClick,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -96,12 +106,35 @@ export default class PointPresenter {
     this.#replacePointToEditForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (update) => {
+    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление.
+    //к ним относятстя изменение дат и цены
+    const isMinorUpdate =
+      !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this.#point.dateTo, update.dateTo) ||
+      !isPriceEqual(this.#point.basePrice, update.basePrice);
+
+
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this.#replaceEditFormToPoint();
   };
+
 
   #handleRollupBtnClick = () => {
     this.#pointEditComponent.reset(this.#point);
     this.#replaceEditFormToPoint();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 }

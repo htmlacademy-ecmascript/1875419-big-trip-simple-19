@@ -1,36 +1,41 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const renderSortOptionsTemplate = (options, currentSortType) =>
-  options
+const renderSortOptionsTemplate = (sortOptions, currentSortType) =>
+  sortOptions
     .map(
-      (option) =>
-        `<div class="trip-sort__item  trip-sort__item--${option.name}">
+      (sortOption) =>
+        `<div class="trip-sort__item  trip-sort__item--${sortOption.name}">
           <input 
-          id="sort-${option.name}" 
+          id="sort-${sortOption.name}" 
           class="trip-sort__input  
           visually-hidden" type="radio" 
           name="trip-sort" 
-          value="${option.name}" 
-          ${option.name === currentSortType ? 'checked' : ''} 
-          ${option.disabled ? 'disabled' : ''}>
-          <label class="trip-sort__btn" data-sort-type=${option.name} for="sort-${option.name}">${option.name}</label>
+          value="${sortOption.name}" 
+          ${sortOption.name === currentSortType ? 'checked' : ''} 
+          ${sortOption.disabled ? 'disabled' : ''}>
+          <label 
+          class="trip-sort__btn" 
+          data-sort-type=${sortOption.name} 
+          for="sort-${sortOption.name}">
+          ${sortOption.name}
+          </label>
         </div>`
     )
     .join('');
 
-const createListSortTemplate = (options, currentSortType) =>
+const createListSortTemplate = (sortOptions, currentSortType) =>
   `<form class="trip-events__trip-sort trip-sort" action="#" method="get">
-    ${renderSortOptionsTemplate(options, currentSortType)}
+    ${renderSortOptionsTemplate(sortOptions, currentSortType)}
   </form>`;
 
 export default class ListSortView extends AbstractView {
-  #options = null;
+  #sortOptions = null;
   #handleSortTypeChange = null;
   #currentSortType = null;
 
-  constructor({sortOption, currentSortType, onSortTypeChange}) {
+  constructor({sortOptions, currentSortType, onSortTypeChange}) {
     super();
-    this.#options = sortOption;
+    this.#sortOptions = sortOptions;
     this.#handleSortTypeChange = onSortTypeChange;
     this.#currentSortType = currentSortType;
 
@@ -38,7 +43,7 @@ export default class ListSortView extends AbstractView {
   }
 
   get template() {
-    return createListSortTemplate(this.#options, this.#currentSortType);
+    return createListSortTemplate(this.#sortOptions, this.#currentSortType);
   }
 
   #sortTypeChangeHandler = (evt) => {

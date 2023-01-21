@@ -14,7 +14,7 @@ const renderFilterOptionsTemplate = (filters, currentFilterType) =>
           ${filter.count === 0 ? 'disabled' : ''} 
           ${filter.name === currentFilterType ? 'checked' : ''} 
           data-sort-type="${filter.name}">
-          <label class="trip-filters__filter-label" data-filter-type=${filter.name} for="filter-${filter.name}">${filter.name} ${filter.count}</label>
+          <label class="trip-filters__filter-label" for="filter-${filter.name}">${filter.name} ${filter.count}</label>
         </div>`
     )
     .join('');
@@ -28,27 +28,27 @@ const createListFilterTemplate = (filters, currentFilterType) =>
 export default class ListFilterView extends AbstractView {
   #filters = null;
   #currentFilter = null;
-  #handleFilterClick = null;
+  #handleFilterChange = null;
 
-  constructor({filters, currentFilterType, onFilterChange}) {
+  constructor({filters, currentFilterType, onFilterTypeChange}) {
     super();
     this.#filters = filters;
     this.#currentFilter = currentFilterType;
-    this.#handleFilterClick = onFilterChange;
+    this.#handleFilterChange = onFilterTypeChange;
 
-    this.element.addEventListener('click', this.#filterClickHandler);
+    this.element.addEventListener('change', this.#filterChangeHandler);
   }
 
   get template() {
     return createListFilterTemplate(this.#filters, this.#currentFilter);
   }
 
-  #filterClickHandler = (evt) => {
+  #filterChangeHandler = (evt) => {
 
-    if (evt.target.tagName !== 'LABEL') {
+    if (evt.target.tagName !== 'INPUT') {
       return;
     }
-    this.#handleFilterClick(evt.target.dataset.filterType);
+    this.#handleFilterChange(evt.target.value);
   };
 
 }
