@@ -3,6 +3,7 @@ import { getDate } from '../utils/dates.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { CITIES_NAMES } from '../mock/const.js';
 
 
 const DEFAULT_START_DATE = dayjs().toISOString();
@@ -194,8 +195,10 @@ export default class EditPointView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#rollupButtonClickHandler);
+    if (this._state.destination) {
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#rollupButtonClickHandler);
+    }
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination')
@@ -239,27 +242,24 @@ export default class EditPointView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
-    const destinations = this.#allDestinations;
 
 
-    if (!evt.target.value) {
+    if (CITIES_NAMES.includes(evt.target.value) && evt.target.value) {
       this.updateElement({
-        destination: ''
+        destination: CITIES_NAMES.indexOf(evt.target.value),
       });
-      return;
+    } else {
+      evt.target.value = '';
     }
-    const selectedDestination = destinations
-      .find((destination) => evt.target.value === destination.name);
-
-    this.updateElement({
-      destination: selectedDestination.id
-    });
   };
 
   #priceChangeHandler = (evt) => {
     evt.preventDefault();
 
-    const price = Number(evt.target.value);
+    let price = Number(evt.target.value);
+    if (price < 0) {
+      price = Math.abs(price);
+    }
     evt.target.value = isNaN(price) ? this._state.basePrice : price;
 
     this._setState({
