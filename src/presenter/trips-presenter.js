@@ -28,6 +28,7 @@ export default class TripPresenter {
   #headerContainer = null;
   #noPointComponent = null;
   #filterType = FilterType.EVERYTHING;
+  #allCities = null;
 
 
   constructor({pointsContainer, pointsModel, destinationsAndOffersModel, filterModel, headerFiltersElement, onNewPointDestroy}) {
@@ -36,6 +37,7 @@ export default class TripPresenter {
     this.#destinationsAndOffersModel = destinationsAndOffersModel;
     this.#allDestinations = this.#destinationsAndOffersModel.destinations;
     this.#allOffers = this.#destinationsAndOffersModel.offersByType;
+    this.#allCities = this.#destinationsAndOffersModel.cities;
     this.#filterModel = filterModel;
     this.#headerContainer = headerFiltersElement;
 
@@ -121,6 +123,7 @@ export default class TripPresenter {
       pointsContainer: this.#pointListComponent.element,
       allDestinations: this.#allDestinations,
       allOffers: this.#allOffers,
+      allCities: this.#allCities,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });

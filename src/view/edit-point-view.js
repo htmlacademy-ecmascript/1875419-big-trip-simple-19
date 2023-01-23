@@ -3,7 +3,6 @@ import { getDate } from '../utils/dates.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import { CITIES_NAMES } from '../mock/const.js';
 
 
 const DEFAULT_START_DATE = dayjs().toISOString();
@@ -182,12 +181,14 @@ export default class EditPointView extends AbstractStatefulView {
   #datepickerTo = null;
   #handleDeleteClick = null;
   #isNewPoint = null;
+  #allCities = null;
 
-  constructor({point = defaultNewPoint, allDestinations, allOffers, onFormSubmit, onRollupBtnClick, onDeleteClick, isNewPoint = false}) {
+  constructor({point = defaultNewPoint, allDestinations, allOffers, allCities, onFormSubmit, onRollupBtnClick, onDeleteClick, isNewPoint = false}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#allDestinations = allDestinations;
     this.#allOffers = allOffers;
+    this.#allCities = allCities;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
     this.#handleDeleteClick = onDeleteClick;
@@ -254,9 +255,9 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
 
 
-    if (CITIES_NAMES.includes(evt.target.value) && evt.target.value) {
+    if (evt.target.value && this.#allCities.includes(evt.target.value)) {
       this.updateElement({
-        destination: CITIES_NAMES.indexOf(evt.target.value),
+        destination: this.#allCities.indexOf(evt.target.value) + 1,
       });
     } else {
       evt.target.value = '';

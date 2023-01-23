@@ -4,6 +4,7 @@ export default class DestinationsAndOffersModel extends Observable {
 
   #destinations = null;
   #offersByType = null;
+  #cities = null;
 
   constructor(destinations, offersByType) {
     super();
@@ -19,5 +20,10 @@ export default class DestinationsAndOffersModel extends Observable {
     return this.#offersByType;
   }
 
+  get cities() {
+    const cities = [];
+    this.#destinations.forEach((destination) => cities.push(destination.name));
 
+    return cities;
+  }
 }
