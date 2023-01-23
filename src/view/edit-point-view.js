@@ -19,7 +19,7 @@ const defaultNewPoint = {
   type: 'taxi'
 };
 
-const createEditPointTemplate = (point, destinations, offersByType) => {
+const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -103,6 +103,14 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
     return template;
   };
 
+  const isNewPointTemplate = () => {
+    let template = '<button class="event__reset-btn" type="reset">Delete</button>';
+    if (isNewPoint) {
+      template = '<button class="event__reset-btn" type="reset">Cancel</button>';
+    }
+    return template;
+  };
+
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -149,7 +157,7 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          ${isNewPointTemplate()}
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button>
@@ -173,8 +181,9 @@ export default class EditPointView extends AbstractStatefulView {
   #datepickerFrom = null;
   #datepickerTo = null;
   #handleDeleteClick = null;
+  #isNewPoint = null;
 
-  constructor({point = defaultNewPoint, allDestinations, allOffers, onFormSubmit, onRollupBtnClick, onDeleteClick}) {
+  constructor({point = defaultNewPoint, allDestinations, allOffers, onFormSubmit, onRollupBtnClick, onDeleteClick, isNewPoint = false}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#allDestinations = allDestinations;
@@ -182,6 +191,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupBtnClick = onRollupBtnClick;
     this.#handleDeleteClick = onDeleteClick;
+    this.#isNewPoint = isNewPoint;
 
     this._restoreHandlers();
   }
@@ -189,7 +199,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   get template() {
 
-    return createEditPointTemplate(this._state, this.#allDestinations, this.#allOffers);
+    return createEditPointTemplate(this._state, this.#allDestinations, this.#allOffers, this.#isNewPoint);
   }
 
   _restoreHandlers() {
