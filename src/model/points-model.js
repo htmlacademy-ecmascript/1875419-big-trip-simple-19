@@ -18,15 +18,12 @@ export default class PointsModel extends Observable {
     return getSortedPoints(this.#points, SortType.DAY);
   }
 
-  get sortedPointsByPrice() {
-    return getSortedPoints(this.#points, SortType.PRICE);
-  }
 
-  updatePoint(updateType, update) {
+  updatePoint = (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
+      throw new Error('Can\'t update unexisting point');
     }
 
     this.#points = [
@@ -36,22 +33,22 @@ export default class PointsModel extends Observable {
     ];
 
     this._notify(updateType, update);
-  }
+  };
 
-  addPoint(updateType, update) {
+  addPoint = (updateType, update) => {
     this.#points = [
       update,
       ...this.#points,
     ];
 
     this._notify(updateType, update);
-  }
+  };
 
-  deleteTask(updateType, update) {
+  deletePoint = (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t delete unexisting task');
+      throw new Error('Can\'t delete unexisting point');
     }
 
     this.#points = [
@@ -60,5 +57,5 @@ export default class PointsModel extends Observable {
     ];
 
     this._notify(updateType);
-  }
+  };
 }

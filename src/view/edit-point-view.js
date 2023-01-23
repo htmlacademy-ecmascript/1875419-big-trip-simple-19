@@ -3,6 +3,7 @@ import { getDate } from '../utils/dates.js';
 import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { CITIES_NAMES } from '../mock/const.js';
 
 
 const DEFAULT_START_DATE = dayjs().toISOString();
@@ -12,7 +13,7 @@ const defaultNewPoint = {
   basePrice: 0,
   dateFrom: DEFAULT_START_DATE,
   dateTo: DEFAULT_END_DATE,
-  destination: 1,
+  destination: null,
   id: 0,
   offers: [],
   type: 'taxi'
@@ -22,7 +23,7 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
-
+  const destinationName = destination !== null ? pointDestination.name : '';
 
   const tripOptionsList = offersByType.map((element) =>
     `<div class="event__type-item">
@@ -85,19 +86,19 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
   };
 
   const destinationSectionTemplate = () => {
-    let template =
-          `<section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${pointDestination.description}</p>
+    let template = '';
+    if (pointDestination) {
+      template =
+      `<section class="event__section  event__section--destination">
+        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${pointDestination.description}</p>
 
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-                ${picturesTemplate()}
-              </div>
-            </div>
-          </section>`;
-    if (!pointDestination) {
-      template = '';
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${picturesTemplate()}
+          </div>
+        </div>
+      </section>`;
     }
     return template;
   };
@@ -125,7 +126,7 @@ const createEditPointTemplate = (point, destinations, offersByType) => {
             <label class="event__label  event__type-output" for="event-destination-${id}">
             ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-${id}">
+            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}">
             <datalist id="destination-list-${id}">
             ${destinationToChoose}
             </datalist>
@@ -194,20 +195,20 @@ export default class EditPointView extends AbstractStatefulView {
   _restoreHandlers() {
     this.element.querySelector('form')
       .addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#rollupButtonClickHandler);
+    if (this._state.destination) {
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#rollupButtonClickHandler);
+    }
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__reset-btn')
       .addEventListener('click', this.#formDeleteClickHandler);
-    //обработчик добавляется, только если у точки маршрута есть доп предложения
-    const pointOffers = this.#allOffers.find((offer) => offer.type === this._state.type);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceChangeHandler);
+    this.element.querySelectorAll('.event__offer-selector input')
+      .forEach((offer) => offer.addEventListener('change', this.#offerChangeHandler));
 
-    if (pointOffers.offers.length) {
-      this.element.querySelector('.event__offer-checkbox').addEventListener('change', this.#offerChangeHandler);
-    }
 
     this.#setDateFromPicker();
     this.#setDateToPicker();
@@ -241,37 +242,46 @@ export default class EditPointView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
-    const destinations = this.#allDestinations;
 
 
-    if (!evt.target.value) {
+    if (CITIES_NAMES.includes(evt.target.value) && evt.target.value) {
       this.updateElement({
-        destination: ''
+        destination: CITIES_NAMES.indexOf(evt.target.value),
       });
-      return;
+    } else {
+      evt.target.value = '';
     }
-    const selectedDestination = destinations
-      .find((destination) => evt.target.value === destination.name);
+  };
 
-    this.updateElement({
-      destination: selectedDestination.id
+  #priceChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    let price = Number(evt.target.value);
+    if (price < 0) {
+      price = Math.abs(price);
+    }
+    evt.target.value = isNaN(price) ? this._state.basePrice : price;
+
+    this._setState({
+      basePrice: evt.target.value
     });
   };
 
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
+    evt.target.toggleAttribute('checked');
 
-    if (evt.target.tagName === 'INPUT') {
-      const currentOfferId = Number(evt.target.dataset.offerId);
-      const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+    let selectedOffers = this._state.offers;
 
-      if (currentOfferIndex === -1) {
-        this._state.offers.push(currentOfferId);
-        return;
-      }
-
-      this._state.offers.splice(currentOfferIndex, 1);
+    if (evt.target.hasAttribute('checked')) {
+      selectedOffers.push(+(evt.target.dataset.offerId));
+    } else {
+      selectedOffers = selectedOffers.filter((id) => id !== +(evt.target.dataset.offerId));
     }
+
+    this._setState({
+      offers: selectedOffers
+    });
   };
 
   reset = (point) => {

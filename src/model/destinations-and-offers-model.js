@@ -19,8 +19,5 @@ export default class DestinationsAndOffersModel extends Observable {
     return this.#offersByType;
   }
 
-//   getOffersForCheckedType(type) {
-//     this.offersForCheckedType = this.#offersByType.find((offer) => offer.type === type);
-//     return this.offersForCheckedType;
-//   }
+
 }
