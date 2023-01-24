@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future'
@@ -21,12 +23,39 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
+};
+
+const DEFAULT_START_DATE = dayjs().toISOString();
+const DEFAULT_END_DATE = dayjs().add((1),'day').toISOString();
+
+const defaultNewPoint = {
+  basePrice: '',
+  dateFrom: DEFAULT_START_DATE,
+  dateTo: DEFAULT_END_DATE,
+  destination: null,
+  id: 0,
+  offers: [],
+  type: 'taxi'
+};
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+const FormType = {
+  EDITING: 'EDITING',
+  CREATING: 'CREATING'
 };
 
 export {
   FilterType,
   SortType,
   UserAction,
-  UpdateType
+  UpdateType,
+  defaultNewPoint,
+  TimeLimit,
+  FormType
 };
 

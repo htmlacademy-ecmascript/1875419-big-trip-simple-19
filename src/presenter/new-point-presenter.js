@@ -1,6 +1,5 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
-import { nanoid } from 'nanoid';
 import { UserAction, UpdateType } from '../const.js';
 import { isEscapeKey } from '../util.js';
 
@@ -10,6 +9,9 @@ export default class NewPointPresenter {
   #handleDestroy = null;
   #pointEditComponent = null;
   #allCities = null;
+  #point = null;
+  #allDestinations = [];
+  #allOffers = [];
 
   constructor({ pointListContainer, onDataChange, onDestroy }) {
     this.#pointListContainer = pointListContainer;
@@ -17,16 +19,23 @@ export default class NewPointPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init(destinationsAndOffersModel) {
+  init(point, allDestinations, allOffers, allCities) {
+    this.#point = point;
+    this.#allDestinations = allDestinations;
+    this.#allOffers = allOffers;
+    this.#allCities = allCities;
+
     if (this.#pointEditComponent !== null) {
       return;
     }
 
     this.#pointEditComponent = new EditPointView({
-      allDestinations: destinationsAndOffersModel.destinations,
-      allOffers: destinationsAndOffersModel.offersByType,
-      allCities: destinationsAndOffersModel.cities,
+      point: this.#point,
+      allDestinations: this.#allDestinations,
+      allOffers: this.#allOffers,
+      allCities: this.#allCities,
       onFormSubmit: this.#handleFormSubmit,
+      onRollupBtnClick: this.#handleFormCloseClick,
       onDeleteClick: this.#handleDeleteClick,
       isNewPoint: true
     });
@@ -49,16 +58,38 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      // Пока у нас нет сервера, который бы после сохранения
-      // выдывал честный id задачи, нам нужно позаботиться об этом самим
-      { id: nanoid(), ...point },
+      point
     );
     this.destroy();
   };
+
+  #handleFormCloseClick = () => {
+    this.#pointEditComponent.reset(this.#point);
+  };
+
 
   #handleDeleteClick = () => {
     this.destroy();

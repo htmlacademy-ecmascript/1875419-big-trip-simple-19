@@ -1,22 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getDate } from '../utils/dates.js';
-import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-
-const DEFAULT_START_DATE = dayjs().toISOString();
-const DEFAULT_END_DATE = dayjs().add((1),'day').toISOString();
-
-const defaultNewPoint = {
-  basePrice: 0,
-  dateFrom: DEFAULT_START_DATE,
-  dateTo: DEFAULT_END_DATE,
-  destination: null,
-  id: 0,
-  offers: [],
-  type: 'taxi'
-};
 
 const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
@@ -183,7 +169,7 @@ export default class EditPointView extends AbstractStatefulView {
   #isNewPoint = null;
   #allCities = null;
 
-  constructor({point = defaultNewPoint, allDestinations, allOffers, allCities, onFormSubmit, onRollupBtnClick, onDeleteClick, isNewPoint = false}) {
+  constructor({point, allDestinations, allOffers, allCities, onFormSubmit, onRollupBtnClick, onDeleteClick, isNewPoint = false}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#allDestinations = allDestinations;
@@ -274,7 +260,7 @@ export default class EditPointView extends AbstractStatefulView {
     evt.target.value = isNaN(price) ? this._state.basePrice : price;
 
     this._setState({
-      basePrice: evt.target.value
+      basePrice: +evt.target.value
     });
   };
 

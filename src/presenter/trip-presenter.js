@@ -5,18 +5,20 @@ import { remove, render, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
 import ListSortView from '../view/sort-view.js';
 import { getSort } from '../mock/sort.js';
-import { SortType } from '../const.js';
+import { SortType, defaultNewPoint } from '../const.js';
 import { getSortedPoints } from '../utils/sort.js';
-import { UpdateType, UserAction, FilterType } from '../const.js';
+import { UpdateType, UserAction, FilterType, TimeLimit } from '../const.js';
 import { filter } from '../utils/filter.js';
+import LoadingView from '../view/loading-view.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
 
 export default class TripPresenter {
   #pointListComponent = new PointListView();
-
+  #loadingComponent = new LoadingView();
   #listPoints = [];
   #pointsContainer = null;
   #pointsModel = null;
-  #destinationsAndOffersModel = null;
   #allDestinations = null;
   #allOffers = null;
   #filterModel = null;
@@ -28,16 +30,16 @@ export default class TripPresenter {
   #headerContainer = null;
   #noPointComponent = null;
   #filterType = FilterType.EVERYTHING;
-  #allCities = null;
+  #isLoading = true;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
 
-  constructor({pointsContainer, pointsModel, destinationsAndOffersModel, filterModel, headerFiltersElement, onNewPointDestroy}) {
+  constructor({pointsContainer, pointsModel, filterModel, headerFiltersElement, onNewPointDestroy}) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
-    this.#destinationsAndOffersModel = destinationsAndOffersModel;
-    this.#allDestinations = this.#destinationsAndOffersModel.destinations;
-    this.#allOffers = this.#destinationsAndOffersModel.offersByType;
-    this.#allCities = this.#destinationsAndOffersModel.cities;
     this.#filterModel = filterModel;
     this.#headerContainer = headerFiltersElement;
 
@@ -56,10 +58,11 @@ export default class TripPresenter {
     this.#renderTripRoute();
   }
 
-  createPoint(destinationsAndOffersModel) {
+  createPoint() {
+    const point = defaultNewPoint;
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init(destinationsAndOffersModel);
+    this.#newPointPresenter.init(point, this.destinations, this.offers, this.cities);
   }
 
   get points() {
@@ -77,19 +80,52 @@ export default class TripPresenter {
     return filteredPoints;
   }
 
+  get offers() {
+    return [...this.#pointsModel.offers];
+  }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  get destinations() {
+    return [...this.#pointsModel.destinations];
+  }
+
+  get cities() {
+    return [...this.#pointsModel.cities];
+  }
+
+
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenter.get(update.id).setAborting();
+        }
         break;
+
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch (err) {
+          this.#newPointPresenter.setAborting();
+        }
         break;
+
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenter.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch (err) {
+          this.#pointPresenter.get(update.id).setAborting();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -105,25 +141,33 @@ export default class TripPresenter {
         this.#clearTripRoute({ resetSortType: true });
         this.#renderTripRoute();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderTripRoute();
+        break;
     }
   };
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#pointsContainer);
+  }
 
 
   #renderNoPoints() {
     this.#noPointComponent = new NoPointsView({
       filterType: this.#filterType
     });
-    render(this.#noPointComponent, this.#pointsContainer, RenderPosition.AFTERBEGIN);
+    render(this.#noPointComponent, this.#pointsContainer);
   }
 
 
   #renderPoint(point) {
-
     const pointPresenter = new PointPresenter ({
       pointsContainer: this.#pointListComponent.element,
-      allDestinations: this.#allDestinations,
-      allOffers: this.#allOffers,
-      allCities: this.#allCities,
+      allDestinations: this.destinations,
+      allOffers: this.offers,
+      allCities: this.cities,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
@@ -165,6 +209,7 @@ export default class TripPresenter {
 
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -177,6 +222,11 @@ export default class TripPresenter {
 
   #renderTripRoute() {
     render(this.#pointListComponent, this.#pointsContainer);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     const pointsCount = this.points.length;
 
