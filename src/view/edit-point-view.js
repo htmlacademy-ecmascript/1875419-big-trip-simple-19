@@ -2,6 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getDate } from '../utils/dates.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { MIN_FLATPICKER_DATE } from '../const.js';
 
 
 const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) => {
@@ -217,6 +218,8 @@ export default class EditPointView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+
+
     this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
@@ -301,13 +304,13 @@ export default class EditPointView extends AbstractStatefulView {
     }
   };
 
-  #dateFromChangeHandler = ([userDate]) => {
+  #dateFromCloseHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate
     });
   };
 
-  #dateToChangeHandler = ([userDate]) => {
+  #dateToCloseHandler = ([userDate]) => {
     this.updateElement({
       dateTo: userDate
     });
@@ -319,9 +322,9 @@ export default class EditPointView extends AbstractStatefulView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        minDate: this._state.dateTo,
+        minDate: MIN_FLATPICKER_DATE,
         defaultDate: this._state.dateFrom,
-        onChange: this.#dateFromChangeHandler,
+        onClose: this.#dateFromCloseHandler,
         time24hr: true
       }
     );
@@ -333,9 +336,9 @@ export default class EditPointView extends AbstractStatefulView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        minDate: this._state.dateFrom,
+        minDate: this.#datepickerFrom.latestSelectedDateObj,
         defaultDate: this._state.dateTo,
-        onChange: this.#dateToChangeHandler,
+        onClose: this.#dateToCloseHandler,
         time24hr: true
       }
     );

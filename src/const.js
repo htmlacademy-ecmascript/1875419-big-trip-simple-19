@@ -49,6 +49,8 @@ const FormType = {
   CREATING: 'CREATING'
 };
 
+const MIN_FLATPICKER_DATE = dayjs('2020-01-01 00:00').toISOString();
+
 export {
   FilterType,
   SortType,
@@ -56,6 +58,7 @@ export {
   UpdateType,
   defaultNewPoint,
   TimeLimit,
-  FormType
+  FormType,
+  MIN_FLATPICKER_DATE
 };
 
