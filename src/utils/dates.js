@@ -12,10 +12,16 @@ const getDate = (date) => parseDate(date).format(DATE_FORMAT);
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 
+const isStartDateExpired = (dateFrom) => dayjs(dateFrom).isAfter(dayjs());
+
+const isEndDateExpired = (dateTo) => dayjs(dateTo).isAfter(dayjs());
+
+const isFutureEvent = (dateFrom, dateTo) => isStartDateExpired(dateFrom) && isEndDateExpired(dateTo);
 
 export {
   getDate,
   getDayAndMonth,
   getTime,
-  isDatesEqual
+  isDatesEqual,
+  isFutureEvent
 };

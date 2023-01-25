@@ -1,5 +1,5 @@
 import { FilterType } from '../const.js';
-import { isFutureEvent } from '../mock/dates.js';
+import { isFutureEvent } from './dates.js';
 
 const filter = {
   [FilterType.EVERYTHING]: (points) => points,

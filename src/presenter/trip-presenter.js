@@ -4,7 +4,7 @@ import NewPointPresenter from './new-point-presenter.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
 import ListSortView from '../view/sort-view.js';
-import { getSort } from '../mock/sort.js';
+import { getSort } from '../utils/sort.js';
 import { SortType, defaultNewPoint } from '../const.js';
 import { getSortedPoints } from '../utils/sort.js';
 import { UpdateType, UserAction, FilterType, TimeLimit } from '../const.js';

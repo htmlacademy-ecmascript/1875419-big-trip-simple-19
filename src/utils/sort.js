@@ -23,8 +23,17 @@ const getSortedPoints = (points, sortType) => {
 
 const isPriceEqual = (priceA, priceB) => (priceA === null && priceB === null) || (priceA === priceB);
 
+
+const getSort = () =>
+  Object.entries(options).map(([optionName, isDisabledOption]) => ({
+    name: optionName,
+    disabled: isDisabledOption(optionName),
+  }));
+
+
 export {
   options,
   getSortedPoints,
-  isPriceEqual
+  isPriceEqual,
+  getSort
 };
