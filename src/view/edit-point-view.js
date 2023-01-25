@@ -7,6 +7,8 @@ import { MIN_FLATPICKER_DATE } from '../const.js';
 
 const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
+  const isValidForm = destination && basePrice;
+
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
   const destinationName = destination !== null ? pointDestination.name : '';
@@ -142,7 +144,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
             <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isValidForm ? '' : 'disabled'}>Save</button>
           ${isNewPointTemplate()}
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -262,7 +264,7 @@ export default class EditPointView extends AbstractStatefulView {
     }
     evt.target.value = isNaN(price) ? this._state.basePrice : price;
 
-    this._setState({
+    this.updateElement({
       basePrice: +evt.target.value
     });
   };

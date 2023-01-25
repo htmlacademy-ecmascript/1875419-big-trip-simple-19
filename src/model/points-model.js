@@ -16,12 +16,9 @@ export default class PointsModel extends Observable {
   }
 
   get points() {
-    return this.#points;
-  }
-
-  get sortedPointsByDay() {
     return getSortedPoints(this.#points, SortType.DAY);
   }
+
 
   get destinations() {
     return this.#destinations;
@@ -84,7 +81,7 @@ export default class PointsModel extends Observable {
       this.#points = [newPoint, ...this.#points];
       this._notify(updateType, newPoint);
     } catch (err) {
-      throw new Error('Can\'t add point');
+      throw new Error(`Can't add point ${update}. Error: ${err}`);
     }
   }
 
@@ -112,7 +109,7 @@ export default class PointsModel extends Observable {
       ...point,
       basePrice: point['base_price'],
       dateFrom: new Date(point['date_from']),
-      dateTo: new Date(point[('date_to')])
+      dateTo: new Date(point['date_to'])
     };
 
     // Ненужные ключи мы удаляем

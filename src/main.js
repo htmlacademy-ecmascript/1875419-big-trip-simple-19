@@ -35,7 +35,7 @@ const tripPresenter = new TripPresenter({
 });
 
 const newPointButtonComponent = new NewPointButtonView({
-  onClick: handleNewPointButtonClick
+  onNewPointButtonClick: handleNewPointButtonClick
 });
 
 function handleNewPointFormClose() {

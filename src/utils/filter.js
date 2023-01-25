@@ -6,15 +6,5 @@ const filter = {
   [FilterType.FUTURE]: (points) => points.filter((point) => isFutureEvent(point.dateFrom, point.dateTo)),
 };
 
-const getFilteredPointsByType = (points, filterType) => {
-  switch (filterType) {
-    case FilterType.EVERYTHING:
-      return points;
-    case FilterType.FUTURE:
-      return points.filter((point) => isFutureEvent(point.dateFrom, point.dateTo));
-    default:
-      return points;
-  }
-};
 
-export {filter, getFilteredPointsByType};
+export {filter};
