@@ -6,7 +6,7 @@ import { MIN_FLATPICKER_DATE } from '../const.js';
 
 
 const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) => {
-  const {type, offers, destination, basePrice, dateFrom, dateTo, id} = point;
+  const {type, offers, destination, basePrice, dateFrom, dateTo, id, isDisabled, isSaving, isDeleting} = point;
   const isValidForm = destination && basePrice;
 
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
@@ -214,9 +214,6 @@ export default class EditPointView extends AbstractStatefulView {
     this.#setDateToPicker();
   }
 
-  static parsePointToState = (point) => ({ ...point });
-
-  static parseStateToPoint = (state) => ({ ...state });
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -349,5 +346,21 @@ export default class EditPointView extends AbstractStatefulView {
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
+  };
+
+  static parsePointToState = (point) => ({
+    ...point,
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false
+  });
+
+  static parseStateToPoint = (state) => {
+    const point = { ...state };
+    delete point.isDisabled;
+    delete point.isDeleting;
+    delete point.isSaving;
+
+    return point;
   };
 }
