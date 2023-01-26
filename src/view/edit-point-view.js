@@ -8,6 +8,8 @@ import { MIN_FLATPICKER_DATE } from '../const.js';
 const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, id, isDisabled, isSaving, isDeleting} = point;
   const isValidForm = destination && basePrice;
+  const saveBtnText = isSaving ? 'Saving...' : 'Save';
+  const deleteBtnText = isDeleting ? 'Deleting...' : 'Delete';
 
   const pointTypeOffers = offersByType.find((offer) => offer.type === type);
   const pointDestination = destinations.find((item) => destination === item.id);
@@ -15,7 +17,15 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
 
   const tripOptionsList = offersByType.map((element) =>
     `<div class="event__type-item">
-      <input id="event-type-${element.type}-${element.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${element.type}">
+      <input 
+      id="event-type-${element.type}-${element.id}" 
+      class="event__type-input  
+      visually-hidden" 
+      type="radio" 
+      name="event-type" 
+      value="${element.type}"
+      ${isDisabled ? 'disabled' : ''}
+      >
       <label class="event__type-label  event__type-label--${element.type}" for="event-type-${element.type}-${element.id}">${element.type}</label>
     </div>
     `).join('');
@@ -92,7 +102,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
   };
 
   const isNewPointTemplate = () => {
-    let template = '<button class="event__reset-btn" type="reset">Delete</button>';
+    let template = `<button class="event__reset-btn" type="reset">${deleteBtnText}</button>`;
     if (isNewPoint) {
       template = '<button class="event__reset-btn" type="reset">Cancel</button>';
     }
@@ -108,7 +118,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
@@ -122,7 +132,16 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
             <label class="event__label  event__type-output" for="event-destination-${id}">
             ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}">
+            <input 
+            class="event__input  
+            event__input--destination" 
+            id="event-destination-${id}" 
+            type="text" 
+            name="event-destination" 
+            value="${destinationName}" 
+            list="destination-list-${id}"
+            ${isDisabled ? 'disabled' : ''}
+            >
             <datalist id="destination-list-${id}">
             ${destinationToChoose}
             </datalist>
@@ -130,10 +149,26 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-${id}">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${getDate(dateFrom)}">
+            <input 
+            class="event__input  
+            event__input--time" 
+            id="event-start-time-${id}" 
+            type="text" 
+            name="event-start-time" 
+            value="${getDate(dateFrom)}"
+            ${isDisabled ? 'disabled' : ''}
+            >
             &mdash;
             <label class="visually-hidden" for="event-end-time-${id}">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${getDate(dateTo)}">
+            <input 
+            class="event__input  
+            event__input--time" 
+            id="event-end-time-${id}" 
+            type="text" 
+            name="event-end-time" 
+            value="${getDate(dateTo)}"
+            ${isDisabled ? 'disabled' : ''}
+            >
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -141,12 +176,12 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit" ${isValidForm ? '' : 'disabled'}>Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isValidForm ? '' : 'disabled'} ${isDisabled ? 'disabled' : ''}>${saveBtnText}</button>
           ${isNewPointTemplate()}
-          <button class="event__rollup-btn" type="button">
+          <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
             <span class="visually-hidden">Open event</span>
           </button>
         </header>

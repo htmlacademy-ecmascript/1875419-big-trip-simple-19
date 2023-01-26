@@ -26,8 +26,8 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
-const DEFAULT_START_DATE = dayjs().toISOString();
-const DEFAULT_END_DATE = dayjs().add((1),'day').toISOString();
+const DEFAULT_START_DATE = dayjs().toDate();
+const DEFAULT_END_DATE = dayjs().add((1),'day').toDate();
 
 const defaultNewPoint = {
   basePrice: '',
