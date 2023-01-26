@@ -15,18 +15,18 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
   const pointDestination = destinations.find((item) => destination === item.id);
   const destinationName = destination !== null ? pointDestination.name : '';
 
-  const tripOptionsList = offersByType.map((element) =>
+  const tripOptionsList = offersByType.map((option) =>
     `<div class="event__type-item">
       <input 
-      id="event-type-${element.type}-${element.id}" 
+      id="event-type-${option.type}-${option.id}" 
       class="event__type-input  
       visually-hidden" 
       type="radio" 
       name="event-type" 
-      value="${element.type}"
+      value="${option.type}"
       ${isDisabled ? 'disabled' : ''}
       >
-      <label class="event__type-label  event__type-label--${element.type}" for="event-type-${element.type}-${element.id}">${element.type}</label>
+      <label class="event__type-label  event__type-label--${option.type}" for="event-type-${option.type}-${option.id}">${option.type}</label>
     </div>
     `).join('');
 
@@ -55,7 +55,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
     return template;
   };
 
-  const destinationToChoose = destinations.map((element) => `<option value="${element.name}"></option>`).join('');
+  const destinationToChoose = destinations.map((city) => `<option value="${city.name}"></option>`).join('');
 
   const offersSectionTemplate = () => {
     let template =

@@ -10,6 +10,7 @@ const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
+
 export default class PointPresenter {
   #pointsContainer = null;
   #pointComponent = null;

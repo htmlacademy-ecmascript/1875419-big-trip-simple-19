@@ -19,8 +19,6 @@ export default class TripPresenter {
   #listPoints = [];
   #pointsContainer = null;
   #pointsModel = null;
-  #allDestinations = null;
-  #allOffers = null;
   #filterModel = null;
   #newPointPresenter = null;
   #sortComponent = null;
