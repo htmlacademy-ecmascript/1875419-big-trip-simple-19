@@ -14,7 +14,7 @@ const renderFilterOptionsTemplate = (filters, currentFilterType) =>
           ${filter.count === 0 ? 'disabled' : ''} 
           ${filter.name === currentFilterType ? 'checked' : ''} 
           data-sort-type="${filter.name}">
-          <label class="trip-filters__filter-label" for="filter-${filter.name}">${filter.name} ${filter.count}</label>
+          <label class="trip-filters__filter-label" for="filter-${filter.name}">${filter.name}</label>
         </div>`
     )
     .join('');

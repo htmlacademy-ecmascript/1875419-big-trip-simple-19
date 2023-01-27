@@ -11,6 +11,7 @@ import { UpdateType, UserAction, FilterType, TimeLimit } from '../const.js';
 import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+import ErrorLoadView from '../view/error-load-view.js';
 
 
 export default class TripPresenter {
@@ -29,6 +30,7 @@ export default class TripPresenter {
   #noPointComponent = null;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #errorLoadComponent = null;
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
     upperLimit: TimeLimit.UPPER_LIMIT
@@ -228,9 +230,14 @@ export default class TripPresenter {
 
     const pointsCount = this.points.length;
 
-    if (pointsCount === 0) {
+    if (pointsCount === 0 && this.offers.length && this.destinations.length) {
       this.#renderNoPoints();
       return;
+    }
+
+    if (this.offers.length === 0 || this.destinations.length === 0) {
+      this.#errorLoadComponent = new ErrorLoadView();
+      render (this.#errorLoadComponent, this.#pointsContainer);
     }
 
 
