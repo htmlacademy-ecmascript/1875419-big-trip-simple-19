@@ -10,6 +10,7 @@ const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
+
 export default class PointPresenter {
   #pointsContainer = null;
   #pointComponent = null;
@@ -20,11 +21,13 @@ export default class PointPresenter {
   #allOffers = null;
   #point = null;
   #mode = Mode.DEFAULT;
+  #allCities = null;
 
-  constructor({pointsContainer, allDestinations, allOffers, onDataChange, onModeChange}) {
+  constructor({pointsContainer, allDestinations, allOffers, allCities, onDataChange, onModeChange}) {
     this.#pointsContainer = pointsContainer;
     this.#allDestinations = allDestinations;
     this.#allOffers = allOffers;
+    this.#allCities = allCities;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
@@ -45,6 +48,7 @@ export default class PointPresenter {
       point: this.#point,
       allDestinations: this.#allDestinations,
       allOffers: this.#allOffers,
+      allCities: this.#allCities,
       onFormSubmit: this.#handleFormSubmit,
       onRollupBtnClick: this.#handleRollupBtnClick,
       onDeleteClick: this.#handleDeleteClick
@@ -61,7 +65,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
 
@@ -72,6 +77,41 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointComponent);
     remove(this.#pointEditComponent);
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
   }
 
   resetView() {
@@ -122,7 +162,6 @@ export default class PointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this.#replaceEditFormToPoint();
   };
 
 

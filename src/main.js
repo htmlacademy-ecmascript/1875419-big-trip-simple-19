@@ -1,26 +1,23 @@
-import TripPresenter from './presenter/trips-presenter.js';
+import TripPresenter from './presenter/trip-presenter.js';
 import PointsModel from './model/points-model.js';
-import { getMockPoints } from './mock/point.js';
-import DestinationsAndOffersModel from './model/destinations-and-offers-model.js';
-import { getDestination } from './mock/destination.js';
-import { getOffersByTypes } from './mock/offer.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
-import { render, RenderPosition } from './framework/render.js';
+import { render } from './framework/render.js';
+import PointsApiService from './points-api-service.js';
 
-const DESTINATIONS_COUNT = 6;
+const AUTHORIZATION = 'Basic bla1bla2bla4';
+const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 
 const headerContainer = document.querySelector('.trip-main');
 const headerFiltersElement = document.querySelector('.trip-controls__filters');
 const mainEventsElement = document.querySelector('.trip-events');
 
-const mockPoints = getMockPoints();
-const destinations = Array.from({ length: DESTINATIONS_COUNT }, (value, index) => getDestination(index));
-const offersByType = getOffersByTypes();
 
-const pointsModel = new PointsModel(mockPoints);
-const destinationsAndOffersModel = new DestinationsAndOffersModel(destinations, offersByType);
+const pointsModel = new PointsModel({
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+});
+
 const filterModel = new FilterModel();
 
 const filterPresenter = new FilterPresenter({
@@ -32,14 +29,13 @@ const filterPresenter = new FilterPresenter({
 const tripPresenter = new TripPresenter({
   pointsContainer: mainEventsElement,
   pointsModel,
-  destinationsAndOffersModel,
   filterModel,
   headerFiltersElement,
   onNewPointDestroy: handleNewPointFormClose
 });
 
 const newPointButtonComponent = new NewPointButtonView({
-  onClick: handleNewPointButtonClick
+  onNewPointButtonClick: handleNewPointButtonClick
 });
 
 function handleNewPointFormClose() {
@@ -47,12 +43,15 @@ function handleNewPointFormClose() {
 }
 
 function handleNewPointButtonClick() {
-  tripPresenter.createPoint(destinationsAndOffersModel);
+  tripPresenter.createPoint();
   newPointButtonComponent.element.disabled = true;
 }
 
-render(newPointButtonComponent, headerContainer, RenderPosition.BEFOREEND);
 filterPresenter.init();
 tripPresenter.init();
 
+pointsModel.init()
+  .finally(() => {
+    render(newPointButtonComponent, headerContainer);
+  });
 
