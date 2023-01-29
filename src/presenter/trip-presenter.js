@@ -49,6 +49,7 @@ export default class TripPresenter {
       onDestroy: onNewPointDestroy
     });
 
+
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -182,7 +183,7 @@ export default class TripPresenter {
       currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
-    render(this.#sortComponent, this.#pointListComponent.element, RenderPosition.AFTERBEGIN);
+    render(this.#sortComponent, this.#pointListComponent.element, RenderPosition.BEFOREBEGIN);
   }
 
 
@@ -190,6 +191,11 @@ export default class TripPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
+
+    if (sortType === SortType.EVENT || sortType === SortType.OFFERS || sortType === SortType.TIME) {
+      return;
+    }
+
     this.#currentSortType = sortType;
     this.#clearTripRoute();
     this.#renderTripRoute();
@@ -241,8 +247,10 @@ export default class TripPresenter {
     }
 
 
-    this.#renderSort();
     this.points.forEach((point) => this.#renderPoint(point));
+    if (!this.#errorLoadComponent){
+      this.#renderSort();
+    }
   }
 }
 
