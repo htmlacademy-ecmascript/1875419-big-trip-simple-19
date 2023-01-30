@@ -242,8 +242,11 @@ export default class TripPresenter {
     }
 
     if (this.offers.length === 0 || this.destinations.length === 0) {
+      const prevErrComponent = this.#errorLoadComponent;
       this.#errorLoadComponent = new ErrorLoadView();
-      render (this.#errorLoadComponent, this.#pointsContainer);
+      if (prevErrComponent === null){
+        render (this.#errorLoadComponent, this.#pointsContainer);
+      }
     }
 
 

@@ -69,7 +69,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
       </div>
     </section>`;
 
-    if (pointTypeOffers.offers.length === 0) {
+    if (!pointTypeOffers) {
       template = '';
     }
     return template;
@@ -342,15 +342,17 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateFromCloseHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate
     });
+    this.#setDateToPicker();
   };
 
   #dateToCloseHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate
     });
+    this.#setDateFromPicker();
   };
 
   #setDateFromPicker = () => {
@@ -360,6 +362,7 @@ export default class EditPointView extends AbstractStatefulView {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         minDate: MIN_FLATPICKER_DATE,
+        maxDate: this._state.dateTo,
         defaultDate: this._state.dateFrom,
         onClose: this.#dateFromCloseHandler,
         'time_24hr': true
