@@ -3,6 +3,7 @@ import { getDate } from '../utils/dates.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { MIN_FLATPICKER_DATE } from '../const.js';
+import he from 'he';
 
 
 const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) => {
@@ -24,6 +25,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
       type="radio" 
       name="event-type" 
       value="${option.type}"
+      ${option.type === type ? 'checked' : ''}
       ${isDisabled ? 'disabled' : ''}
       >
       <label class="event__type-label  event__type-label--${option.type}" for="event-type-${option.type}-${option.id}">${option.type}</label>
@@ -38,16 +40,16 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
           `<div class="event__offer-selector">
             <input class="event__offer-checkbox  
             visually-hidden" 
-            id="event-offer-${type}-${offer.id}" 
+            id="event-offer-${he.encode(type)}-${offer.id}" 
             type="checkbox" 
-            name="${offer.title}" 
+            name="${he.encode(offer.title)}" 
             ${offers.includes(offer.id) ? 'checked' : ''}
             data-offer-id="${offer.id}"
             >
-            <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
-              <span class="event__offer-title">${offer.title}</span>
+            <label class="event__offer-label" for="event-offer-${he.encode(type)}-${offer.id}">
+              <span class="event__offer-title">${he.encode(offer.title)}</span>
               &plus;&euro;&nbsp;
-              <span class="event__offer-price">${offer.price}</span>
+              <span class="event__offer-price">${he.encode(offer.price.toString())}</span>
             </label>
           </div>
         `).join('');
@@ -55,7 +57,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
     return template;
   };
 
-  const destinationToChoose = destinations.map((city) => `<option value="${city.name}"></option>`).join('');
+  const destinationToChoose = destinations.map((city) => `<option value="${he.encode(city.name)}"></option>`).join('');
 
   const offersSectionTemplate = () => {
     let template =
@@ -67,7 +69,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
       </div>
     </section>`;
 
-    if (pointTypeOffers.offers.length === 0) {
+    if (!pointTypeOffers) {
       template = '';
     }
     return template;
@@ -89,7 +91,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
       template =
       `<section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${pointDestination.description}</p>
+        <p class="event__destination-description">${he.encode(pointDestination.description)}</p>
 
         <div class="event__photos-container">
           <div class="event__photos-tape">
@@ -102,7 +104,12 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
   };
 
   const isNewPointTemplate = () => {
-    let template = `<button class="event__reset-btn" type="reset">${deleteBtnText}</button>`;
+    let template = (
+      `<button class="event__reset-btn" type="reset">${deleteBtnText}</button>
+    <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
+      <span class="visually-hidden">Open event</span>
+    </button>`
+    );
     if (isNewPoint) {
       template = '<button class="event__reset-btn" type="reset">Cancel</button>';
     }
@@ -130,7 +137,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-${id}">
-            ${type}
+            ${he.encode(type)}
             </label>
             <input 
             class="event__input  
@@ -138,7 +145,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
             id="event-destination-${id}" 
             type="text" 
             name="event-destination" 
-            value="${destinationName}" 
+            value="${he.encode(destinationName)}" 
             list="destination-list-${id}"
             ${isDisabled ? 'disabled' : ''}
             >
@@ -176,14 +183,11 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
+            <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${he.encode(basePrice.toString())}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isValidForm ? '' : 'disabled'} ${isDisabled ? 'disabled' : ''}>${saveBtnText}</button>
-          ${isNewPointTemplate()}
-          <button class="event__rollup-btn" type="button" ${isDisabled ? 'disabled' : ''}>
-            <span class="visually-hidden">Open event</span>
-          </button>
+          ${isNewPointTemplate()}          
         </header>
 
         <section class="event__details">
@@ -228,19 +232,18 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('form')
-      .addEventListener('submit', this.#formSubmitHandler);
-    if (this._state.destination) {
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+
+    if (this._state.id) {
       this.element.querySelector('.event__rollup-btn')
         .addEventListener('click', this.#rollupButtonClickHandler);
     }
-    this.element.querySelector('.event__type-group')
-      .addEventListener('change', this.#pointTypeChangeHandler);
-    this.element.querySelector('.event__input--destination')
-      .addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__reset-btn')
-      .addEventListener('click', this.#formDeleteClickHandler);
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceChangeHandler);
+
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
+
     this.element.querySelectorAll('.event__offer-selector input')
       .forEach((offer) => offer.addEventListener('change', this.#offerChangeHandler));
 
@@ -339,15 +342,17 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateFromCloseHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate
     });
+    this.#setDateToPicker();
   };
 
   #dateToCloseHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate
     });
+    this.#setDateFromPicker();
   };
 
   #setDateFromPicker = () => {
@@ -357,9 +362,10 @@ export default class EditPointView extends AbstractStatefulView {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         minDate: MIN_FLATPICKER_DATE,
+        maxDate: this._state.dateTo,
         defaultDate: this._state.dateFrom,
         onClose: this.#dateFromCloseHandler,
-        time24hr: true
+        'time_24hr': true
       }
     );
   };
@@ -373,7 +379,7 @@ export default class EditPointView extends AbstractStatefulView {
         minDate: this.#datepickerFrom.latestSelectedDateObj,
         defaultDate: this._state.dateTo,
         onClose: this.#dateToCloseHandler,
-        time24hr: true
+        'time_24hr': true
       }
     );
   };
