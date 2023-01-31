@@ -241,12 +241,11 @@ export default class TripPresenter {
   };
 
   #renderNewPointButton() {
-    const prevNewPointButtonComponent = this.#newPointButtonComponent;
-    this.#newPointButtonComponent = new NewPointButtonView({
-      newPointButtonContainer: this.#newPointButtonContainer,
-      onNewPointButtonClick: this.#handleNewPointButtonClick
-    });
-    if (prevNewPointButtonComponent === null){
+    if (!this.#newPointButtonComponent) {
+      this.#newPointButtonComponent = new NewPointButtonView({
+        newPointButtonContainer: this.#newPointButtonContainer,
+        onNewPointButtonClick: this.#handleNewPointButtonClick
+      });
       render(this.#newPointButtonComponent, this.#newPointButtonContainer);
     }
   }
