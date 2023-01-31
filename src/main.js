@@ -2,11 +2,9 @@ import TripPresenter from './presenter/trip-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import NewPointButtonView from './view/new-point-button-view.js';
-import { render } from './framework/render.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic bla1bla2bla4';
+const AUTHORIZATION = 'Basic bla1bla2bla5';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 
 const headerContainer = document.querySelector('.trip-main');
@@ -31,27 +29,11 @@ const tripPresenter = new TripPresenter({
   pointsModel,
   filterModel,
   headerFiltersElement,
-  onNewPointDestroy: handleNewPointFormClose
+  newPointButtonContainer: headerContainer,
 });
-
-const newPointButtonComponent = new NewPointButtonView({
-  onNewPointButtonClick: handleNewPointButtonClick
-});
-
-function handleNewPointFormClose() {
-  newPointButtonComponent.element.disabled = false;
-}
-
-function handleNewPointButtonClick() {
-  tripPresenter.createPoint();
-  newPointButtonComponent.element.disabled = true;
-}
 
 filterPresenter.init();
 tripPresenter.init();
+pointsModel.init();
 
-pointsModel.init()
-  .finally(() => {
-    render(newPointButtonComponent, headerContainer);
-  });
 

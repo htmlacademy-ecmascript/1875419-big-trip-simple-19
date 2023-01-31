@@ -12,6 +12,7 @@ import { filter } from '../utils/filter.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import ErrorLoadView from '../view/error-load-view.js';
+import NewPointButtonView from '../view/new-point-button-view.js';
 
 
 export default class TripPresenter {
@@ -28,6 +29,8 @@ export default class TripPresenter {
   #pointPresenter = new Map();
   #headerContainer = null;
   #noPointComponent = null;
+  #newPointButtonContainer = null;
+  #newPointButtonComponent = null;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
   #errorLoadComponent = null;
@@ -37,16 +40,17 @@ export default class TripPresenter {
   });
 
 
-  constructor({pointsContainer, pointsModel, filterModel, headerFiltersElement, onNewPointDestroy}) {
+  constructor({pointsContainer, pointsModel, filterModel, headerFiltersElement, newPointButtonContainer}) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
     this.#headerContainer = headerFiltersElement;
+    this.#newPointButtonContainer = newPointButtonContainer;
 
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#pointListComponent.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewPointDestroy
+      onDestroy: this.#handleNewPointFormClose
     });
 
 
@@ -226,6 +230,27 @@ export default class TripPresenter {
     }
   }
 
+
+  #handleNewPointFormClose = () => {
+    this.#newPointButtonComponent.element.disabled = false;
+  };
+
+  #handleNewPointButtonClick = () => {
+    this.createPoint();
+    this.#newPointButtonComponent.element.disabled = true;
+  };
+
+  #renderNewPointButton() {
+    if (!this.#newPointButtonComponent) {
+      this.#newPointButtonComponent = new NewPointButtonView({
+        newPointButtonContainer: this.#newPointButtonContainer,
+        onNewPointButtonClick: this.#handleNewPointButtonClick
+      });
+      render(this.#newPointButtonComponent, this.#newPointButtonContainer);
+    }
+  }
+
+
   #renderTripRoute() {
     render(this.#pointListComponent, this.#pointsContainer);
 
@@ -253,6 +278,7 @@ export default class TripPresenter {
     this.points.forEach((point) => this.#renderPoint(point));
     if (!this.#errorLoadComponent){
       this.#renderSort();
+      this.#renderNewPointButton();
     }
   }
 }

@@ -5,10 +5,12 @@ const createNewPointButtonTemplate = () => '<button class="trip-main__event-add-
 
 export default class NewPointButtonView extends AbstractView {
   #handleNewPointButtonClick = null;
+  #newPointButtonContainer = null;
 
 
-  constructor({onNewPointButtonClick}) {
+  constructor({newPointButtonContainer, onNewPointButtonClick}) {
     super();
+    this.#newPointButtonContainer = newPointButtonContainer;
     this.#handleNewPointButtonClick = onNewPointButtonClick;
     this.element.addEventListener('click', this.#newPointButtonClickHandler);
   }
