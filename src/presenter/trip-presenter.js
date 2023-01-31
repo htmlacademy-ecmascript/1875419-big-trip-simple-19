@@ -263,6 +263,7 @@ export default class TripPresenter {
 
     if (pointsCount === 0 && this.offers.length && this.destinations.length) {
       this.#renderNoPoints();
+      this.#renderNewPointButton();
       return;
     }
 
