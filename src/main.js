@@ -3,6 +3,7 @@ import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsApiService from './points-api-service.js';
+import TripInfoPresenter from './presenter/trip-info-presenter.js';
 
 const AUTHORIZATION = 'Basic bla1bla2bla8';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip/';
@@ -18,12 +19,6 @@ const pointsModel = new PointsModel({
 
 const filterModel = new FilterModel();
 
-const filterPresenter = new FilterPresenter({
-  filterContainer: headerFiltersElement,
-  filterModel,
-  pointsModel
-});
-
 const tripPresenter = new TripPresenter({
   pointsContainer: mainEventsElement,
   pointsModel,
@@ -32,7 +27,19 @@ const tripPresenter = new TripPresenter({
   newPointButtonContainer: headerContainer,
 });
 
+const tripInfoPresenter = new TripInfoPresenter({
+  tripInfoContainer: headerContainer,
+  pointsModel
+});
+
+const filterPresenter = new FilterPresenter({
+  filterContainer: headerFiltersElement,
+  filterModel,
+  pointsModel
+});
+
 filterPresenter.init();
+tripInfoPresenter.init();
 tripPresenter.init();
 pointsModel.init();
 
