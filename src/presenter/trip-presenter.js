@@ -80,6 +80,8 @@ export default class TripPresenter {
         return getSortedPoints(filteredPoints, SortType.DAY);
       case SortType.PRICE:
         return getSortedPoints(filteredPoints, SortType.PRICE);
+      case SortType.TIME:
+        return getSortedPoints(filteredPoints, SortType.TIME);
     }
 
     return filteredPoints;
@@ -196,7 +198,7 @@ export default class TripPresenter {
       return;
     }
 
-    if (sortType === SortType.EVENT || sortType === SortType.OFFERS || sortType === SortType.TIME) {
+    if (sortType === SortType.EVENT || sortType === SortType.OFFERS) {
       return;
     }
 
