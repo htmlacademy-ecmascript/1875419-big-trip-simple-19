@@ -4,8 +4,8 @@ import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic bla1bla2bla7';
-const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
+const AUTHORIZATION = 'Basic bla1bla2bla8';
+const END_POINT = 'https://19.ecmascript.pages.academy/big-trip/';
 
 const headerContainer = document.querySelector('.trip-main');
 const headerFiltersElement = document.querySelector('.trip-controls__filters');

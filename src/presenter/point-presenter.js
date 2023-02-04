@@ -41,7 +41,8 @@ export default class PointPresenter {
       point: this.#point,
       allDestinations: this.#allDestinations,
       allOffers: this.#allOffers,
-      onRollupBtnClick: this.#handleEditClick
+      onRollupBtnClick: this.#handleEditClick,
+      onFavoriteClick: this.#handleFavoriteClick
     });
 
     this.#pointEditComponent = new EditPointView ({
@@ -161,6 +162,14 @@ export default class PointPresenter {
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
+    );
+  };
+
+  #handleFavoriteClick = () => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      { ...this.#point, isFavorite: !this.#point.isFavorite }
     );
   };
 
