@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 const options = {
   [SortType.DAY]: () => false,
   [SortType.EVENT]: () => true,
-  [SortType.TIME]: () => true,
+  [SortType.TIME]: () => false,
   [SortType.PRICE]: () => false,
   [SortType.OFFERS]: () => true,
 };
@@ -16,6 +16,8 @@ const getSortedPoints = (points, sortType) => {
       return points.sort((pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom)));
     case SortType.PRICE:
       return points.sort((pointA, pointB) => pointB.basePrice - pointA.basePrice);
+    case SortType.TIME:
+      return points.sort((pointA, pointB) => dayjs(pointB.dateTo).diff(pointB.dateFrom) - dayjs(pointA.dateTo).diff(pointA.dateFrom));
     default:
       return points;
   }

@@ -2,7 +2,9 @@ import dayjs from 'dayjs';
 
 const FilterType = {
   EVERYTHING: 'everything',
-  FUTURE: 'future'
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
 };
 
 const SortType = {
@@ -34,6 +36,7 @@ const defaultNewPoint = {
   dateFrom: DEFAULT_START_DATE,
   dateTo: DEFAULT_END_DATE,
   destination: null,
+  isFavorite: false,
   id: 0,
   offers: [],
   type: 'taxi'

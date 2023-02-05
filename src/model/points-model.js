@@ -109,13 +109,15 @@ export default class PointsModel extends Observable {
       ...point,
       basePrice: point['base_price'],
       dateFrom: new Date(point['date_from']),
-      dateTo: new Date(point['date_to'])
+      dateTo: new Date(point['date_to']),
+      isFavorite: point['is_favorite']
     };
 
     // Ненужные ключи мы удаляем
     delete adaptedPoint['base_price'];
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
 
     return adaptedPoint;
   }
