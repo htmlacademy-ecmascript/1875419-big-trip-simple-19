@@ -17,6 +17,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
   const destinationName = destination !== null ? pointDestination.name : '';
 
   const tripOptionsList = offersByType.map((option) =>
+  /*html*/
     `<div class="event__type-item">
       <input 
       id="event-type-${option.type}-${option.id}" 
@@ -37,6 +38,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
     if (pointTypeOffers) {
       template = pointTypeOffers.offers
         .map((offer) =>
+        /*html*/
           `<div class="event__offer-selector">
             <input class="event__offer-checkbox  
             visually-hidden" 
@@ -61,6 +63,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
 
   const offersSectionTemplate = () => {
     let template =
+    /*html*/
     `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -89,6 +92,7 @@ const createEditPointTemplate = (point, destinations, offersByType, isNewPoint) 
     let template = '';
     if (pointDestination) {
       template =
+      /*html*/
       `<section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${he.encode(pointDestination.description)}</p>
