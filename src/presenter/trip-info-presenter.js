@@ -3,15 +3,12 @@ import { remove, render, RenderPosition, replace } from '../framework/render.js'
 
 export default class TripInfoPresenter {
   #tripInfoContainer = null;
+  #tripInfoComponent = null;
   #pointsModel = null;
 
-  #tripInfoComponent = null;
-
-  constructor({ tripInfoContainer, pointsModel }) {
+  constructor({ tripInfoContainer, pointsModel}) {
     this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
-
-    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
@@ -31,7 +28,16 @@ export default class TripInfoPresenter {
     remove(prevInfoComponent);
   }
 
-  #handleModelEvent = () => {
-    this.init();
-  };
+  destroy() {
+    if (this.#tripInfoComponent === null) {
+      return;
+    }
+
+    remove(this.#tripInfoComponent);
+    this.#tripInfoComponent = null;
+  }
+
+  // #handleModelEvent = () => {
+  //   this.init();
+  // };
 }

@@ -3,7 +3,7 @@ import NoPointsView from '../view/no-points-view.js';
 import NewPointPresenter from './new-point-presenter.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
-import ListSortView from '../view/sort-view.js';
+import SortView from '../view/sort-view.js';
 import { getSort } from '../utils/sort.js';
 import { SortType, defaultNewPoint } from '../const.js';
 import { getSortedPoints } from '../utils/sort.js';
@@ -13,6 +13,7 @@ import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import ErrorLoadView from '../view/error-load-view.js';
 import NewPointButtonView from '../view/new-point-button-view.js';
+import TripInfoPresenter from './trip-info-presenter.js';
 
 
 export default class TripPresenter {
@@ -20,6 +21,8 @@ export default class TripPresenter {
   #loadingComponent = new LoadingView();
   #listPoints = [];
   #pointsContainer = null;
+  #tripInfoContainer = null;
+  #tripInfoPresenter = null;
   #pointsModel = null;
   #filterModel = null;
   #newPointPresenter = null;
@@ -40,8 +43,9 @@ export default class TripPresenter {
   });
 
 
-  constructor({pointsContainer, pointsModel, filterModel, headerFiltersElement, newPointButtonContainer}) {
+  constructor({pointsContainer,tripInfoContainer, pointsModel, filterModel, headerFiltersElement, newPointButtonContainer}) {
     this.#pointsContainer = pointsContainer;
+    this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
     this.#headerContainer = headerFiltersElement;
@@ -51,6 +55,12 @@ export default class TripPresenter {
       pointListContainer: this.#pointListComponent.element,
       onDataChange: this.#handleViewAction,
       onDestroy: this.#handleNewPointFormClose
+    });
+
+    this.#tripInfoPresenter = new TripInfoPresenter({
+      tripInfoContainer: this.#tripInfoContainer,
+      pointsModel: this.#pointsModel,
+      filteredPoints: this.points
     });
 
 
@@ -184,7 +194,7 @@ export default class TripPresenter {
   }
 
   #renderSort() {
-    this.#sortComponent = new ListSortView ({
+    this.#sortComponent = new SortView ({
       sortOptions: this.#sortOptions,
       currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
@@ -230,6 +240,8 @@ export default class TripPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
+
+    this.#tripInfoPresenter.destroy();
   }
 
 
@@ -283,6 +295,9 @@ export default class TripPresenter {
       this.#renderSort();
       this.#renderNewPointButton();
     }
+
+
+    this.#tripInfoPresenter.init();
   }
 }
 

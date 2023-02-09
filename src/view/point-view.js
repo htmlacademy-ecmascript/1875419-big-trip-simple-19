@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 dayjs.extend(Duration);
 const MILLISECONDS_AMOUNT_IN_HOUR = 3600000;
 const MILLISECONDS_AMOUNT_IN_DAY = 86400000;
+const MILLISECONDS_AMOUNT_IN_MONTH = 2592000000;
 
 const createPointTemplate = (point, destinations, offersByType) => {
   const {type, offers, destination, basePrice, dateFrom, dateTo, isFavorite} = point;
@@ -35,8 +36,11 @@ const createPointTemplate = (point, destinations, offersByType) => {
 
   const getEventDuration = (from, to) => {
     const eventDuration = to.diff(from);
-    let durationFormat = 'DD[D] HH[H] mm[M]';
+    let durationFormat = 'MM[M] DD[D] HH[H] mm[M]';
 
+    if (eventDuration < MILLISECONDS_AMOUNT_IN_MONTH){
+      durationFormat = 'DD[D] HH[H] mm[M]';
+    }
     if (eventDuration < MILLISECONDS_AMOUNT_IN_DAY) {
       durationFormat = 'HH[H] mm[M]';
     }
