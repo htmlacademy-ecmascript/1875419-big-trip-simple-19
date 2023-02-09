@@ -5,18 +5,14 @@ export default class TripInfoPresenter {
   #tripInfoContainer = null;
   #tripInfoComponent = null;
   #pointsModel = null;
-  #filteredPoints = null;
 
-  constructor({ tripInfoContainer, pointsModel, filteredPoints}) {
+  constructor({ tripInfoContainer, pointsModel}) {
     this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
-    this.#filteredPoints = filteredPoints;
-
-    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
-    const points = this.#filteredPoints;
+    const points = this.#pointsModel.points;
     const offers = this.#pointsModel.offers;
     const destinations = this.#pointsModel.destinations;
 
@@ -41,7 +37,7 @@ export default class TripInfoPresenter {
     this.#tripInfoComponent = null;
   }
 
-  #handleModelEvent = () => {
-    this.init();
-  };
+  // #handleModelEvent = () => {
+  //   this.init();
+  // };
 }

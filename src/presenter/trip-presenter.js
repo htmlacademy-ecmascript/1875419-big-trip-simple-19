@@ -57,6 +57,12 @@ export default class TripPresenter {
       onDestroy: this.#handleNewPointFormClose
     });
 
+    this.#tripInfoPresenter = new TripInfoPresenter({
+      tripInfoContainer: this.#tripInfoContainer,
+      pointsModel: this.#pointsModel,
+      filteredPoints: this.points
+    });
+
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -290,11 +296,6 @@ export default class TripPresenter {
       this.#renderNewPointButton();
     }
 
-    this.#tripInfoPresenter = new TripInfoPresenter({
-      tripInfoContainer: this.#tripInfoContainer,
-      pointsModel: this.#pointsModel,
-      filteredPoints: this.points
-    });
 
     this.#tripInfoPresenter.init();
   }
