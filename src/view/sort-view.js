@@ -28,7 +28,7 @@ const createListSortTemplate = (sortOptions, currentSortType) =>
     ${renderSortOptionsTemplate(sortOptions, currentSortType)}
   </form>`;
 
-export default class ListSortView extends AbstractView {
+export default class SortView extends AbstractView {
   #sortOptions = null;
   #handleSortTypeChange = null;
   #currentSortType = null;

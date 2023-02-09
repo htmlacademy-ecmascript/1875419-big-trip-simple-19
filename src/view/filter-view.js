@@ -25,7 +25,7 @@ const createListFilterTemplate = (filters, currentFilterType) =>
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 
-export default class ListFilterView extends AbstractView {
+export default class FilterView extends AbstractView {
   #filters = null;
   #currentFilter = null;
   #handleFilterChange = null;

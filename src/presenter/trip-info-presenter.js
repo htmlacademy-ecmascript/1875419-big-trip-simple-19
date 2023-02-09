@@ -3,19 +3,20 @@ import { remove, render, RenderPosition, replace } from '../framework/render.js'
 
 export default class TripInfoPresenter {
   #tripInfoContainer = null;
-  #pointsModel = null;
-
   #tripInfoComponent = null;
+  #pointsModel = null;
+  #filteredPoints = null;
 
-  constructor({ tripInfoContainer, pointsModel }) {
+  constructor({ tripInfoContainer, pointsModel, filteredPoints}) {
     this.#tripInfoContainer = tripInfoContainer;
     this.#pointsModel = pointsModel;
+    this.#filteredPoints = filteredPoints;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   init() {
-    const points = this.#pointsModel.points;
+    const points = this.#filteredPoints;
     const offers = this.#pointsModel.offers;
     const destinations = this.#pointsModel.destinations;
 
@@ -29,6 +30,15 @@ export default class TripInfoPresenter {
 
     replace(this.#tripInfoComponent, prevInfoComponent);
     remove(prevInfoComponent);
+  }
+
+  destroy() {
+    if (this.#tripInfoComponent === null) {
+      return;
+    }
+
+    remove(this.#tripInfoComponent);
+    this.#tripInfoComponent = null;
   }
 
   #handleModelEvent = () => {
